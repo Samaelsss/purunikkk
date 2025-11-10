@@ -1,7 +1,14 @@
 // Product Data - 100+ items for e-commerce
 const PRODUCTS_DATA = [
     // Purun Collection (30 items)
-    { id: 1, name: 'Purun Basket', subtitle: 'Keranjang Purun', category: 'purun', description: 'Anyaman purun dengan pola geometris hangat dan desain klasik', price: 'Rp 150.000', icon: '🧺' },
+    { 
+        id: 1, name: 'Purun Basket', 
+        subtitle: 'Keranjang Purun', 
+        category: 'purun',
+        description: 'Anyaman purun dengan pola geometris hangat dan desain klasik', 
+        price: 'Rp 150.000', 
+        icon: '🧺' 
+    },
     { id: 2, name: 'Purun Wall Art', subtitle: 'Seni Dinding Purun', category: 'purun', description: 'Panel dekorasi purun dengan komposisi kontemporer yang elegan', price: 'Rp 250.000', icon: '🖼️' },
     { id: 3, name: 'Purun Organizer', subtitle: 'Organizer Purun', category: 'purun', description: 'Kotak organizer purun dengan detail tenun rapat dan fungsional', price: 'Rp 180.000', icon: '📦' },
     { id: 4, name: 'Purun Vase', subtitle: 'Vas Bunga Purun', category: 'purun', description: 'Vas bunga purun dengan desain minimalis dan elegan', price: 'Rp 95.000', icon: '🌺' },
@@ -107,7 +114,7 @@ const PRODUCTS_DATA = [
     { id: 100, name: 'Eceng Gondok Box Cushion', subtitle: 'Bantal Kotak Eceng Gondok', category: 'eceng-gondok', description: 'Bantal kotak eceng gondok untuk dekorasi', price: 'Rp 155.000', icon: '🎀' },
 ];
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 16;
 let currentPage = 1;
 let currentCategory = 'all';
 let filteredProducts = PRODUCTS_DATA;
@@ -166,16 +173,16 @@ function renderProductCards(page) {
                 </div>
             </div>
             <div class="card-image">
-                <span>${product.icon}</span>
+                <img src="img/IMG_409${(product.id % 7)}.jpg" alt="${product.name}" loading="lazy">
             </div>
-            <div class="card-content">
-                <h2 class="card-title">${product.name}</h2>
-                <p class="card-subtitle">${product.subtitle}</p>
-                <p class="card-description">${product.description}</p>
+            <div class="card-content-product">
+                <h2 class="card-title-product">${product.name}</h2>
+                <p class="card-subtitle-product">${product.subtitle}</p>
+                <p class="card-description-product">${product.description}</p>
                 <p class="card-price">${product.price}</p>
-                <div class="card-buttons">
-                    <button class="btn btn-secondary">Secondary</button>
-                    <button class="btn btn-primary">Primary</button>
+                <div class="card-buttons-product">
+                    <button class="btn btn-secondary">Detail</button>
+                    <button class="btn btn-primary">Beli</button>
                 </div>
             </div>
         </div>
@@ -188,9 +195,32 @@ function renderProductCards(page) {
                 const productId = card.dataset.id;
                 const product = PRODUCTS_DATA.find(p => p.id === parseInt(productId));
                 if (product) {
-                    openLightbox(product);
-                    document.body.classList.add('lightbox-open');
+                    // alert removed
                 }
+            }
+        });
+    });
+
+    // Add button click handlers
+    document.querySelectorAll('.btn-secondary').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const productId = e.target.closest('.product-card').dataset.id;
+            const product = PRODUCTS_DATA.find(p => p.id === parseInt(productId));
+            if (product) {
+                // alert removed
+            }
+        });
+    });
+
+    document.querySelectorAll('.btn-primary').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const productId = e.target.closest('.product-card').dataset.id;
+            const product = PRODUCTS_DATA.find(p => p.id === parseInt(productId));
+            if (product) {
+                // Simulate buy action
+                alert(`Produk ${product.name} ditambahkan ke keranjang!`);
             }
         });
     });
@@ -319,44 +349,6 @@ document.querySelectorAll('.category-card').forEach(card => {
         updatePaginationUI();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
-});
-
-// Lightbox functionality
-const lightbox = document.getElementById('galleryLightbox');
-const lightboxClose = lightbox.querySelector('.lightbox-close');
-let currentProductCard = null;
-
-function openLightbox(product) {
-    currentProductCard = product;
-
-    lightbox.querySelector('.lightbox-title').textContent = product.name;
-    lightbox.querySelector('.lightbox-subtitle').textContent = product.subtitle;
-    lightbox.querySelector('.lightbox-price').textContent = product.price;
-    lightbox.querySelector('.lightbox-description').textContent = product.description;
-    lightbox.querySelector('.lightbox-image-container').innerHTML = `<div class="lightbox-emoji">${product.icon}</div>`;
-
-    lightbox.classList.add('is-visible');
-    lightbox.setAttribute('aria-hidden', 'false');
-}
-
-function closeLightbox() {
-    lightbox.classList.remove('is-visible');
-    lightbox.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('lightbox-open');
-}
-
-lightboxClose.addEventListener('click', closeLightbox);
-
-lightbox.addEventListener('click', (e) => {
-    if (e.target === lightbox) {
-        closeLightbox();
-    }
-});
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        closeLightbox();
-    }
 });
 
 // Initialize app
