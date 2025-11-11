@@ -41,6 +41,7 @@ body {
   font-size: 14px;
   color: #5e3a1f;
   padding: 20px 40px 0;
+  margin-left: 6.5vw;
 }
 
 .breadcrumb a {
@@ -55,19 +56,70 @@ body {
 }
 
 /* ===============================
-   GO BACK BUTTON
+   GO BACK BUTTON (Compact Expand)
    =============================== */
 .Go_back {
+  position: fixed;
+  top: 80px;
+  left: 91px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 40px;
+  gap: 6px;
+  background: rgba(247, 235, 218, 0.85);
+  backdrop-filter: blur(4px);
+  padding: 5px 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   cursor: pointer;
   color: #5e3a1f;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 999;
+  transition: all 0.25s ease;
+  overflow: hidden;
+  width: 20px; /* collapsed width */
+  height: 40px;
+  white-space: nowrap;
+}
+
+/* Hide text by default */
+.Go_back h4 {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+/* Icon size */
+.Go_back svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
 }
 
 .Go_back svg path {
-  fill: #5e3a1f;
+  fill: currentColor;
+  transition: 0.25s ease;
+}
+
+/* Hover to expand */
+.Go_back:hover {
+  background: #b68a60;
+  color: #fff;
+  transform: scale(1.04);
+  width: 90px; /* expanded width */
+  justify-content: flex-start;
+  padding-right: 15px;
+}
+
+.Go_back:hover h4 {
+  opacity: 1;
+  width: auto;
+  margin-left: 4px;
+}
+
+.Go_back:hover svg path {
+  fill: #fff;
 }
 
 /* ===============================
@@ -113,14 +165,17 @@ body {
   border-color: #4aa6ff;
 }
 
+/* Image Wrapper */
 .main-image-wrapper {
   background-color: #5e3a1f;
   border-radius: 12px;
   display: flex;
-  width: 37vw;
-  height: 37.5vw;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+  position: relative;
+  width: 37vw;
+  height: 37.5vw;
 }
 
 .main-image-wrapper img.main {
@@ -128,6 +183,9 @@ body {
   height: auto;
   border-radius: 10px;
   object-fit: cover;
+  transition: transform 0.3s ease;
+  cursor: zoom-in;
+  user-select: none;
 }
 
 .thumbnail-list {
@@ -175,7 +233,6 @@ body {
   margin-top: 0;
   margin-bottom: 8px;
 }
-
 /* ===============================
    RATES SECTION
    =============================== */
@@ -226,8 +283,8 @@ body {
   margin-bottom: 10px;
 }
 
-.model_produk h2,
-.model_produk_fun h2 {
+.model_produk h4,
+.model_produk_fun h4 {
   font-size: 20px;
   color: #5e3a1f;
   font-weight: 600;
