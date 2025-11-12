@@ -385,6 +385,42 @@
   // Init
   // -----------------------------
   document.addEventListener("DOMContentLoaded", function () {
+    // Smooth scroll helper for any [data-scroll] triggers
+    function initSmoothScrollers() {
+      var triggers = Array.prototype.slice.call(document.querySelectorAll('[data-scroll]'));
+      triggers.forEach(function(el){
+        el.addEventListener('click', function(){
+          var sel = el.getAttribute('data-scroll');
+          if (!sel) return;
+          var target = document.querySelector(sel);
+          if (!target) return;
+          var rect = target.getBoundingClientRect();
+          var offset = Math.max(80, parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-safe-area')) || 80);
+          var top = rect.top + (window.pageYOffset || document.documentElement.scrollTop) - offset;
+          window.scrollTo({ top: top, behavior: 'smooth' });
+        });
+      });
+    }
+
+    // Rotating subtitle in hero
+    function initHeroRotatingSubtitle() {
+      var el = document.querySelector('.hero__rotating');
+      if (!el) return;
+      var phrases = [
+        'Handwoven Excellence',
+        'Crafted by Local Artisans',
+        'Sustainably Sourced Materials',
+        'Timeless Natural Aesthetics'
+      ];
+      var i = 0;
+      function tick(){
+        el.textContent = phrases[i % phrases.length];
+        i++;
+      }
+      tick();
+      setInterval(tick, 2200);
+    }
+
     function initThemeToggle() {
       const btns = [
         document.getElementById('themeToggleMobile'),
@@ -434,6 +470,8 @@
     initBottomNav();
     initBlob();
     initCtaInteractive();
+    initSmoothScrollers();
+    initHeroRotatingSubtitle();
     initThemeToggle();
 
     if (window.lucide && window.lucide.createIcons) {

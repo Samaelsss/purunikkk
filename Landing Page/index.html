@@ -11,6 +11,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../navbar/navbar.css">
     <link rel="stylesheet" href="../footer/footer.css">
+    <style>
+      /* Hero top waving element */
+      @property --tx { syntax: '<length>'; inherits: false; initial-value: 0px; }
+      @property --ty { syntax: '<length>'; inherits: false; initial-value: 0px; }
+      .hero-section { --wave-dy: 0px; overflow: visible; }
+      /* Align wave between the side stripes (counter hero 1rem padding), place behind navbar */
+      .hero-wave { position:absolute; top:calc(-1 * max(var(--nav-safe-area), env(safe-area-inset-top)) - 8px); left:calc(-1rem - var(--stripe-total) - 6px); right:calc(-1rem - var(--stripe-total) - 6px); height:120px; overflow:hidden; z-index:0; pointer-events:none; }
+      .hero-wave__svg { width:100%; height:100%; display:block; }
+      /* Improved motion: decoupled horizontal drift (linear) + gentle vertical bob */
+      .hero-wave .wave { fill:#543310; opacity:.55; mix-blend-mode:plus-lighter; transform-origin:50% 0%; will-change:transform; animation: waveX var(--dur,16s) linear infinite, waveY calc(var(--dur,16s) * 1.5) ease-in-out infinite; transform: translate3d(var(--tx), calc(var(--y,0px) + var(--wave-dy) + var(--ty)), 0); }
+      .hero-wave .wave--1 { --dur:14s; --y:0px;  --amp:4px;  opacity:.5;  animation-delay:-1s; }
+      .hero-wave .wave--2 { --dur:16s; --y:8px;  --amp:6px;  opacity:.35; animation-delay:-2s; }
+      .hero-wave .wave--3 { --dur:20s; --y:14px; --amp:8px;  opacity:.25; animation-delay:-3s; }
+      @keyframes waveX {
+        from { --tx: 0px; }
+        to   { --tx: -64px; }
+      }
+      @keyframes waveY {
+        0%   { --ty: 0px; }
+        50%  { --ty: var(--amp,6px); }
+        100% { --ty: 0px; }
+      }
+            body.light .hero-wave .wave { mix-blend-mode: normal; opacity:.45; }
+      body.dark .hero-wave .wave { fill:#F9F4E1; }
+      @media (max-width: 680px) { .hero-wave { height: 90px; left:calc(-1rem - var(--stripe-total) - 6px); right:calc(-1rem - var(--stripe-total) - 6px); } }
+    </style>
 </head>
 <body>
   <!-- Top scroll progress -->
@@ -23,16 +49,53 @@
   <main class="main-content">
     <!-- HERO -->
     <section class="hero-section" id="home">
+      <div class="hero-wave" aria-hidden="true">
+        <svg class="hero-wave__svg" viewBox="0 0 1200 140" preserveAspectRatio="none">
+          <path class="wave wave--1" d="M0,40 C200,80 400,0 600,40 C800,80 1000,0 1200,40 L1200,0 L0,0 Z"></path>
+          <path class="wave wave--2" d="M0,60 C200,100 400,20 600,60 C800,100 1000,20 1200,60 L1200,0 L0,0 Z"></path>
+          <path class="wave wave--3" d="M0,80 C200,120 400,40 600,80 C800,120 1000,40 1200,80 L1200,0 L0,0 Z"></path>
+        </svg>
+      </div>
       <div class="hero">
         <div class="hero__text">
           <div class="hero__logo-circle">
             <span>PURUNIK</span>
           </div>
           <h1 class="hero__title">Purunik Kerajinan</h1>
-          <p class="hero__subtitle">Natural &amp; Eco-friendly</p>
-          <button class="btn btn--primary hero__button">Learn more</button>
+          <p class="hero__subtitle">
+            <span class="hero__subtitle-static">Natural &amp; Eco-friendly · </span>
+            <span class="hero__rotating" aria-live="polite"></span>
+          </p>
+
+          <div class="hero__chips">
+            <button class="chip" data-scroll="#shop">Bags</button>
+            <button class="chip" data-scroll="#shop">Baskets</button>
+            <button class="chip" data-scroll="#shop">Decor</button>
+            <button class="chip chip--filled" data-scroll="#sejarah-purunik">Sustainable</button>
+          </div>
+
+          <div class="hero__cta-row">
+            <button class="btn btn--primary hero__button" data-scroll="#shop">Shop Now</button>
+            <button class="btn btn--secondary hero__button" data-scroll="#sejarah-purunik">Our Story</button>
+          </div>
+
+          <div class="hero__assurance" aria-label="Assurance badges">
+            <div class="assurance-item"><i data-lucide="leaf"></i><span>Eco-friendly</span></div>
+            <div class="assurance-item"><i data-lucide="handbag"></i><span>Handwoven</span></div>
+            <div class="assurance-item"><i data-lucide="truck"></i><span>Worldwide Shipping</span></div>
+          </div>
+
+          <div class="hero__stats-inline" aria-label="Quick stats">
+            <div class="stat"><span class="stat__number">4.9★</span><span class="stat__label">Avg Rating</span></div>
+            <div class="stat"><span class="stat__number">10K+</span><span class="stat__label">Customers</span></div>
+            <div class="stat"><span class="stat__number">100%</span><span class="stat__label">Handmade</span></div>
+          </div>
         </div>
         <div class="hero__images">
+          <div class="hero__floating-badge">
+            <i data-lucide="sparkles"></i>
+            <span>New Collection</span>
+          </div>
           <div class="hero__image-card">
             <img src="asset/IMG_4090.jpg" alt="Natural woven straw bag" />
           </div>
@@ -41,6 +104,10 @@
           </div>
         </div>
       </div>
+      <button class="scroll-cue" data-scroll="#sejarah-purunik" aria-label="Scroll to next section">
+        <span class="scroll-cue__mouse"></span>
+        <span class="scroll-cue__arrow">▾</span>
+      </button>
     </section>
 
     <!-- SEJARAH -->
@@ -666,5 +733,41 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="script.js"></script>
+  <script>
+  (function(){
+    function initHeroWave(){
+      var section = document.querySelector('.hero-section');
+      if (!section) return;
+      var max = 10;
+      var target = 0, current = 0, ticking = false;
+      function onMove(e){
+        var rect = section.getBoundingClientRect();
+        var dy = (e.clientY - rect.top)/rect.height - 0.5;
+        target = dy * max;
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(tick);
+        }
+      }
+      function tick(){
+        current += (target - current) * 0.15; // smooth towards target
+        section.style.setProperty('--wave-dy', current.toFixed(2)+'px');
+        if (Math.abs(target - current) > 0.1) {
+          requestAnimationFrame(tick);
+        } else {
+          ticking = false;
+        }
+      }
+      section.addEventListener('mousemove', onMove);
+      section.addEventListener('mouseleave', function(){
+        target = 0;
+        if (!ticking) { ticking = true; requestAnimationFrame(tick); }
+      });
+    }
+    document.addEventListener('DOMContentLoaded', function(){
+      initHeroWave();
+    });
+  })();
+  </script>
 </body>
 </html>
