@@ -11,10 +11,23 @@
     --nb-fg: #543310;
     --nb-primary: #B08F70;
     --nb-secondary: #73512C;
+    --nb-muted: #73512C;
+    --nb-muted-weak: rgba(84, 51, 16, 0.6);
+    --nb-outline: rgba(84, 51, 16, 0.2);
 
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+body.dark .navbar-scope {
+    --nb-bg: #543310;
+    --nb-fg: #F9F4E1;
+    --nb-primary: #B08F70;
+    --nb-secondary: #73512C;
+    --nb-muted: rgba(249, 244, 225, 0.85);
+    --nb-muted-weak: rgba(249, 244, 225, 0.7);
+    --nb-outline: rgba(249, 244, 225, 0.2);
 }
 
 .navbar-scope .container {
@@ -33,6 +46,7 @@
     position: relative;
     max-width: 1000px;
     background: var(--nb-bg);
+    border: 1px solid var(--nb-outline);
     border-radius: 9999px;
     padding: 12px;
     pointer-events: auto; /* override global .bottom-nav pointer-events: none */
@@ -76,7 +90,7 @@
         inset 0 2px 4px rgba(0, 0, 0, 0.06),
         0 1px 2px rgba(255, 255, 255, 0.8);
     transition: transform 0.2s ease;
-    color: var(--nb-secondary);
+    color: var(--nb-muted);
 }
 
 .navbar-scope .search-btn-mobile:hover {
@@ -99,7 +113,7 @@
     justify-content: center;
     width: 40px;
     height: 40px;
-    background: var(--nb-bg);
+    background: var(--nb-fg); /* invert: dark bg in light mode, light bg in dark mode */
     border: none;
     border-radius: 9999px;
     cursor: pointer;
@@ -108,7 +122,16 @@
         inset 0 2px 4px rgba(0, 0, 0, 0.06),
         0 1px 2px rgba(255, 255, 255, 0.8);
     transition: transform 0.2s ease;
-    color: var(--nb-secondary);
+    color: var(--nb-bg); /* icon uses opposite color */
+}
+
+/* icon morph transition */
+.navbar-scope .theme-toggle-btn .icon {
+    transition: color 180ms ease, transform 180ms ease, opacity 180ms ease;
+}
+.navbar-scope .theme-toggle-btn.morphing .icon {
+    opacity: 0;
+    transform: scale(0.7) rotate(-20deg);
 }
 .navbar-scope .theme-toggle-btn:hover { transform: scale(1.05); }
 .navbar-scope .theme-toggle-btn:active { transform: scale(0.95); }
@@ -155,16 +178,16 @@
 }
 
 .navbar-scope .nav-item .icon {
-    color: var(--nb-secondary);
+    color: var(--nb-muted);
     transition: color 0.3s ease;
 }
 
 .navbar-scope .nav-label {
     font-size: 10px;
     font-weight: 500;
-    color: var(--nb-secondary);
+    color: var(--nb-muted-weak);
     transition: all 0.3s ease;
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
 .navbar-scope .nav-item.active .icon {
@@ -177,21 +200,67 @@
 }
 
 .navbar-scope .nav-item::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom right, var(--nb-fg), var(--nb-secondary));
-    border-radius: 9999px;
-    opacity: 0;
-    z-index: -1;
-    box-shadow: 
-        inset 0 2px 8px rgba(0, 0, 0, 0.3),
-        0 4px 12px rgba(0, 0, 0, 0.15);
-    transition: opacity 0.3s ease;
+    content: none;
+    display: none;
 }
 
 .navbar-scope .nav-item.active::before {
-    opacity: 1;
+    content: none;
+    display: none;
+}
+
+/* Sliding active indicator */
+.navbar-scope .bottom-nav.has-indicator {
+    position: relative;
+}
+.navbar-scope .nav-active-indicator {
+    position: absolute;
+    top: 0; left: 0;
+    width: 0; height: 0;
+    border-radius: 12px;
+    background: linear-gradient(to bottom right, var(--nb-fg), var(--nb-secondary));
+    box-shadow:
+        inset 0 2px 8px rgba(0,0,0,0.2),
+        0 6px 16px rgba(0,0,0,0.15);
+    transition: transform 300ms cubic-bezier(.2,.7,.2,1), width 220ms ease, height 220ms ease, background 220ms ease;
+    z-index: 0;
+}
+
+/* Faster animation variant used only when opening/closing search */
+.navbar-scope .nav-active-indicator.fast {
+    transition: transform 90ms cubic-bezier(.2,.7,.2,1), width 80ms ease, height 80ms ease, background 80ms ease;
+}
+
+/* Ensure items sit above indicator */
+.navbar-scope .nav-item { position: relative; z-index: 1; }
+
+/* Light/Dark adaptation for indicator */
+body.light .navbar-scope .nav-active-indicator {
+    background: linear-gradient(to bottom right, var(--nb-fg), var(--nb-secondary));
+}
+body.dark .navbar-scope .nav-active-indicator {
+    background: linear-gradient(to bottom right, var(--nb-primary), var(--nb-secondary));
+}
+
+/* Improve contrast for active item */
+body.dark .navbar-scope .nav-item.active .icon,
+body.dark .navbar-scope .nav-item.active .nav-label {
+    color: var(--nb-fg);
+}
+
+/* Ensure icons are light in dark mode */
+body.dark .navbar-scope .search-toggle {
+    color: var(--nb-muted);
+}
+body.dark .navbar-scope .mobile-search-inner .icon {
+    color: var(--nb-muted);
+}
+body.dark .navbar-scope .search-btn-mobile .icon,
+body.dark .navbar-scope .search-btn-tablet .icon {
+    color: var(--nb-muted);
+}
+body.dark .navbar-scope .theme-toggle-btn .icon {
+    color: var(--nb-bg);
 }
 
 /* Mobile Search Dropdown */
@@ -282,7 +351,7 @@
             inset 0 2px 4px rgba(0, 0, 0, 0.06),
             0 1px 2px rgba(255, 255, 255, 0.8);
         transition: transform 0.2s ease;
-        color: var(--nb-secondary);
+        color: var(--nb-muted);
     }
 
     .navbar-scope .search-btn-tablet:hover {
@@ -442,7 +511,7 @@
         justify-content: center;
         width: 44px;
         height: 44px;
-        background: var(--nb-bg);
+        background: var(--nb-fg); /* invert */
         border: none;
         border-radius: 9999px;
         cursor: pointer;
@@ -451,7 +520,7 @@
             inset 0 2px 4px rgba(0, 0, 0, 0.06),
             0 1px 2px rgba(255, 255, 255, 0.8);
         transition: transform 0.2s ease;
-        color: var(--nb-secondary);
+        color: var(--nb-bg);
     }
     .navbar-scope .nav-desktop .theme-toggle-btn:hover { transform: scale(1.05); }
     .navbar-scope .nav-desktop .theme-toggle-btn:active { transform: scale(0.95); }

@@ -18,6 +18,28 @@
   font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
 }
 
+/* Light mode for footer (follows body.light) */
+body.light .footer-scope {
+  --ft-bg: #F9F4E1;
+  --ft-fg: #543310;
+  --ft-primary: #B08F70;
+  --ft-secondary: #73512C;
+  --ft-muted: rgba(84, 51, 16, 0.75);
+  --ft-card: rgba(84, 51, 16, 0.06);
+  --ft-glass: rgba(84, 51, 16, 0.08);
+  --ft-border: rgba(84, 51, 16, 0.18);
+  --ft-ring: rgba(84, 51, 16, 0.25);
+  --ft-shadow: 0 12px 36px rgba(0,0,0,0.15);
+}
+
+/* Adjust decorative background to non-animated static look, already handled in landing CSS for animations */
+body.light .footer-scope .footer {
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(176,143,112,0.12), transparent 70%),
+    radial-gradient(1000px 500px at 120% 10%, rgba(115,81,44,0.12), transparent 65%),
+    var(--ft-bg);
+}
+
 .footer-scope .footer {
   position: relative;
   overflow: hidden;
