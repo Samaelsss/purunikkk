@@ -1,34 +1,117 @@
-/* ===============================
-   GLOBAL STYLE
-   =============================== */
+:root {
+  --background: #F9F4E1;
+  --foreground: #543310;
+  --primary: #B08F70;
+  --primary-foreground: #F9F4E1;
+  --secondary: #73512C;
+  --secondary-foreground: #F9F4E1;
+  --accent: #543310;
+  --border: #B08F70;
+  --card: #F9F4E1;
+  --background-dark: #543310;
+  --foreground-dark: #B08F70;
+  --primary-dark: #B08F70;
+  --primary-foreground-dark: #543310;
+  --secondary-dark: #F9F4E1;
+  --secondary-foreground-dark: #543310;
+  --accent-dark: #73512C;
+  --border-dark: #B08F70;
+  --card-dark: #543310;
+}
+
+body.dark {
+  --background: var(--background-dark);
+  --foreground: var(--foreground-dark);
+  --primary: var(--primary-dark);
+  --primary-foreground: var(--primary-foreground-dark);
+  --secondary: var(--secondary-dark);
+  --secondary-foreground: var(--secondary-foreground-dark);
+  --accent: var(--accent-dark);
+  --border: var(--border-dark);
+  --card: var(--card-dark);
+}
+
+/* Layout base */
+html, body { height: 100%; }
 body {
-  font-family: "Inter", sans-serif;
-  background-color: #5e3a1f; /* Brown background behind wrapper */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  /* Remove browser default gaps and align content exactly with stripe inner edges */
   margin: 0;
-  padding: 0;
+  padding-left: var(--stripe-total);
+  padding-right: var(--stripe-total);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+/* Responsive side border stripes (left and right) */
+:root {
+  /* At 1920px viewport these equal: 106px, 21px, 21px */
+  --stripe-1: calc(100vw * 106 / 1920); /* #543310 */
+  --stripe-2: calc(100vw * 21 / 1920);  /* #73512C */
+  --stripe-3: calc(100vw * 21 / 1920);  /* #D7B290 */
+  --stripe-total: calc(var(--stripe-1) + var(--stripe-2) + var(--stripe-3));
+  /* Extra inner gutter beyond the stripe width, scales on small/large screens */
+  --content-extra: clamp(8px, 1vw, 20px);
+  --nav-safe-area: clamp(64px, 10vh, 96px);
+  --hero-wave-height: 120px;
+  --hero-wave-gap: 12px;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: calc(var(--stripe-total) + 1px); /* slight overlap to avoid hairline gaps */
+  pointer-events: none; /* visual only */
+  z-index: 1; /* above body background, below overlays */
+}
+
+body::before {
+  left: 0;
+  background: linear-gradient(
+    to right,
+    #543310 0,
+    #543310 var(--stripe-1),
+    #73512C var(--stripe-1),
+    #73512C calc(var(--stripe-1) + var(--stripe-2)),
+    #D7B290 calc(var(--stripe-1) + var(--stripe-2)),
+    #D7B290 var(--stripe-total)
+  );
+}
+
+body::after {
+  right: 0;
+  background: linear-gradient(
+    to left,
+    #543310 0,
+    #543310 var(--stripe-1),
+    #73512C var(--stripe-1),
+    #73512C calc(var(--stripe-1) + var(--stripe-2)),
+    #D7B290 calc(var(--stripe-1) + var(--stripe-2)),
+    #D7B290 var(--stripe-total)
+  );
 }
 
 .page-wrapper {
-  background-color: #c5a67b; /* Soft beige inside */
   max-width: 1100px;
-  margin: 0 auto;
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
-  border-left: 12px solid #7a5230;
-  border-right: 12px solid #7a5230;
   border-radius: 0 0 15px 15px;
 }
 
 .page-wrapper-v2 {
-  background-color: #f5eedf;
+  margin-top: 10vw;
   margin-right: 2vh;
   margin-left: 2vh;
-}
-/* ===============================
-   NAVBAR SPACER
-   =============================== */
-.navbar-space {
-  height: 80px;
-  background-color: #c5a67b;
 }
 
 /* ===============================
@@ -59,9 +142,8 @@ body {
    GO BACK BUTTON (Compact Expand)
    =============================== */
 .Go_back {
-  position: fixed;
-  top: 80px;
-  left: 91px;
+  top: 5vh;
+  left: 10vw;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -77,7 +159,7 @@ body {
   z-index: 999;
   transition: all 0.25s ease;
   overflow: hidden;
-  width: 20px; /* collapsed width */
+  width: 40px; /* collapsed width */
   height: 40px;
   white-space: nowrap;
 }
@@ -107,7 +189,7 @@ body {
   background: #b68a60;
   color: #fff;
   transform: scale(1.04);
-  width: 90px; /* expanded width */
+  width: 120px; /* expanded width */
   justify-content: flex-start;
   padding-right: 15px;
 }
@@ -129,7 +211,6 @@ body {
   display: flex;
   gap: 40px;
   padding: 30px 3px;
-  margin-top: -4vw;
   align-items: flex-start;
 }
 
@@ -448,9 +529,9 @@ button:hover {
    =============================== */
 .tabs-section {
   background-color: #b68a60;
-  padding: 30px;
+  padding: 16px 20px;
   margin: 1vw;
-  border-radius: 26px 26px 26px 26px;
+  border-radius: 26px;
   color: #fff;
   text-align: center;
   font-family: "Inter", sans-serif;
@@ -459,8 +540,8 @@ button:hover {
 .tabs {
   display: flex;
   justify-content: center;
-  gap: 60px;
-  margin-bottom: 25px;
+  gap: 20px;
+  margin-bottom: 12px;
 }
 
 .tab {
@@ -468,8 +549,8 @@ button:hover {
   color: #4a2e17;
   border: none;
   border-radius: 40px;
-  padding: 12px 35px;
-  font-size: 18px;
+  padding: 10px 22px;
+  font-size: 16px;
   font-weight: 700;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
   cursor: pointer;
@@ -533,19 +614,44 @@ button:hover {
 
 /* Button */
 .info-btn {
-  margin-top: 25px;
-  background: #4a2e17;
+  margin: 6px auto 0;
+  background: #6f4a2e;
   color: #fff;
   border: none;
-  padding: 10px 25px;
-  border-radius: 20px;
-  font-weight: 600;
+  padding: 14px 28px;
+  border-radius: 999px;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 240px;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.12);
 }
 
 .info-btn:hover {
-  background: #3b2313;
+  background: #7c5838;
+}
+
+@media (max-width: 768px) {
+  .tabs-section {
+    padding: 12px 12px;
+    margin: 3vw 1vw;
+  }
+  .tabs {
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .tab {
+    padding: 10px 18px;
+    font-size: 15px;
+  }
+  .info-btn {
+    min-width: 200px;
+    padding: 12px 22px;
+    font-size: 15px;
+  }
 }
 /* ===============================
    🔥 Rekomendasi Produk (Advanced + Interactive)
@@ -797,33 +903,3 @@ button.secondary:hover {
   100% { transform: translateX(-50%); }
 }
 
-/* ===============================
-   FOOTER
-   =============================== */
-.footer {
-  background: #f5eedf;
-  border-top: 2px solid #d3b890;
-  padding: 40px;
-  color: #5e3a1f;
-}
-
-.footer-columns {
-  display: flex;
-  justify-content: space-around;
-}
-
-.footer-columns h5 {
-  font-size: 16px;
-  margin-bottom: 10px;
-}
-
-.footer-columns p {
-  margin: 5px 0;
-  font-size: 14px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.footer-columns p:hover {
-  color: #a07246;
-}
