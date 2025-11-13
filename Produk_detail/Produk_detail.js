@@ -1,3 +1,276 @@
+/* ===== BUNDLE: product-detail.js + Produk_detail.js =====
+   Catatan: Urutan dijaga. Bagian product-detail.js dulu (render data),
+   lalu UI interaksi dari Produk_detail.js. */
+
+// ==== BEGIN product-detail.js ====
+function getParam(name){
+  const url = new URL(window.location.href);
+  return url.searchParams.get(name);
+}
+
+function formatRupiah(num){
+  if (typeof num === 'string') {
+    return num.startsWith('Rp') ? num : 'Rp ' + num;
+  }
+  return 'Rp ' + Number(num).toLocaleString('id-ID');
+}
+
+function parsePriceToNumber(price){
+  if (typeof price === 'number') return price;
+  const digits = String(price).replace(/[^0-9]/g, '');
+  return Number(digits || 0);
+}
+
+const wishlist = JSON.parse(localStorage.getItem('wishlist')||'[]').map(String);
+let cart = JSON.parse(localStorage.getItem('cart')||'[]');
+
+function shuffleArray(a){
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function resolveDetailUrl(id){
+  const path = window.location.pathname;
+  if (path.includes('/Product/')) return `../Produk_detail.html?id=${encodeURIComponent(id)}`;
+  return `Produk_detail.html?id=${encodeURIComponent(id)}`;
+}
+
+function renderProduct(){
+  const id = getParam('id');
+  const root = document.querySelector('.product-section')
+            || document.getElementById('product-root')
+            || document.querySelector('.product-detail')
+            || document.body;
+
+  if(!id){ if (root) root.style.display = 'none'; return; }
+
+  const hideSelectors = ['.products-container', '.pagination-container', '.top-row'];
+  hideSelectors.forEach(sel => {
+    document.querySelectorAll(sel).forEach(el => el && (el.style.display = 'none'));
+  });
+
+  if (root) root.style.display = '';
+
+  const dataset = (typeof PRODUCTS !== 'undefined') ? PRODUCTS : ((typeof PRODUCTS_DATA !== 'undefined') ? PRODUCTS_DATA : []);
+  let prod = dataset.find(p => String(p.id) === String(id) || p.id === parseInt(id));
+  // Fallback: jika id numerik dan tidak cocok dengan field id, gunakan index (1-based)
+  if (!prod && /^\d+$/.test(String(id))) {
+    const idx = Math.max(0, parseInt(id, 10) - 1);
+    if (idx >= 0 && idx < dataset.length) prod = dataset[idx];
+  }
+
+  if(!prod){
+    const backUrl = (window.location.pathname.includes('/Product/')) ? 'Product/product.html' : 'product.html';
+    document.body.innerHTML = `<div class="container"><p>Produk tidak ditemukan. <a href="${backUrl}">Kembali ke katalog</a></p></div>`;
+    return;
+  }
+
+  const imgEl = document.getElementById('product-img') || document.getElementById('main-img');
+  const nameEl = document.getElementById('product-name');
+  const priceEl = document.getElementById('product-price');
+  const descEl = document.getElementById('product-desc');
+  const specsWrap = document.getElementById('product-specs');
+  const breadcrumbEl = document.getElementById('breadcrumb-product');
+
+  if (imgEl) { imgEl.src = prod.img || prod.image || ''; imgEl.alt = prod.name || ''; }
+  if (nameEl) { nameEl.textContent = prod.name || ''; }
+  if (breadcrumbEl) { breadcrumbEl.textContent = prod.name || ''; }
+  if (priceEl) { priceEl.textContent = formatRupiah(prod.price); }
+  if (descEl) { descEl.textContent = prod.description || ''; }
+
+  const thumbs = (Array.isArray(prod.images) && prod.images.length)
+    ? prod.images
+    : [prod.thumb || prod.img, prod.thumb || prod.img, prod.img].filter(Boolean);
+  const thumbList = document.getElementById('thumbnail-list');
+  if (thumbList && thumbs.length) {
+    thumbList.innerHTML = '';
+    thumbs.forEach((src, idx) => {
+      const t = document.createElement('img');
+      t.src = src;
+      if (idx === 0) t.classList.add('active');
+      t.addEventListener('click', () => {
+        document.querySelectorAll('#thumbnail-list img').forEach(i=>i.classList.remove('active'));
+        t.classList.add('active');
+        if (imgEl) imgEl.src = src;
+      });
+      thumbList.appendChild(t);
+    });
+  }
+
+  if (specsWrap) {
+    specsWrap.innerHTML = '';
+    if (prod.specs && typeof prod.specs === 'object') {
+      for(const k in prod.specs){
+        const box = document.createElement('div');
+        const label = document.createElement('h4');
+        label.textContent = k;
+        const val = document.createElement('img');
+        val.alt = k;
+        val.style.display = 'none';
+        box.appendChild(label);
+        specsWrap.appendChild(box);
+      }
+    }
+  }
+  const specContent = document.getElementById('spec-content');
+  if (specContent) {
+    if (prod.specs && typeof prod.specs === 'object') {
+      const table = document.createElement('table');
+      Object.entries(prod.specs).forEach(([k,v])=>{
+        const tr = document.createElement('tr');
+        if (Array.isArray(v)) {
+          const list = `<ul>${v.map(item=>`<li>${item}</li>`).join('')}</ul>`;
+          tr.innerHTML = `<td>${k}</td><td>${list}</td>`;
+        } else {
+          tr.innerHTML = `<td>${k}</td><td>${v}</td>`;
+        }
+        table.appendChild(tr);
+      });
+      specContent.innerHTML = '';
+      specContent.appendChild(table);
+    } else {
+      specContent.textContent = 'Spesifikasi belum tersedia.';
+    }
+  }
+  const descContent = document.getElementById('desc-content');
+  if (descContent) { descContent.textContent = prod.description || ''; }
+
+  // Tambahan: sold & rating
+  const soldEl = document.getElementById('Jumlah_terjual');
+  if (soldEl && prod.sold != null) soldEl.textContent = String(prod.sold);
+  const ratingWrap = document.querySelector('.Bintang');
+  if (ratingWrap && typeof prod.rating === 'number') {
+    ratingWrap.innerHTML = '';
+    for (let i = 1; i <= 5; i++) {
+      const star = document.createElement('i');
+      star.className = i <= prod.rating ? 'fa-solid fa-star' : 'fa-regular fa-star';
+      ratingWrap.appendChild(star);
+    }
+  }
+
+  // Render motifs dari data
+  const motifsWrap = document.querySelector('.model_produk');
+  if (motifsWrap && Array.isArray(prod.motifs) && prod.motifs.length) {
+    motifsWrap.innerHTML = '';
+    prod.motifs.forEach((m, idx) => {
+      const div = document.createElement('div');
+      if (idx === 0) div.classList.add('active');
+      const img = document.createElement('img');
+      img.src = m.img || '';
+      img.alt = m.name || '';
+      const h4 = document.createElement('h4');
+      h4.textContent = m.name || '';
+      div.appendChild(img);
+      div.appendChild(h4);
+      motifsWrap.appendChild(div);
+    });
+  }
+
+  // Render models dari data
+  const modelsWrap = document.querySelector('.model_produk_fun');
+  if (modelsWrap && Array.isArray(prod.models) && prod.models.length) {
+    // simpan judul jika ada
+    const title = modelsWrap.querySelector('h4')?.textContent || 'Pilih model';
+    modelsWrap.innerHTML = '';
+    const titleEl = document.createElement('h4');
+    titleEl.textContent = title;
+    modelsWrap.appendChild(titleEl);
+    prod.models.forEach((name, idx) => {
+      const div = document.createElement('div');
+      div.className = 'Model_1';
+      if (idx === 0) div.classList.add('active');
+      const h4 = document.createElement('h4');
+      h4.textContent = name;
+      div.appendChild(h4);
+      modelsWrap.appendChild(div);
+    });
+  }
+  const wbtn = document.getElementById('add-wishlist-btn') || document.getElementById('favorite');
+  if (wbtn) {
+    const setWishText = (active) => {
+      if (wbtn.id === 'favorite') {
+        wbtn.innerHTML = active ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart"></i>';
+      } else {
+        wbtn.textContent = active ? '❤ Tersimpan' : '❤ Wishlist';
+      }
+    };
+    const saved = JSON.parse(localStorage.getItem('wishlist')||'[]').map(String);
+    setWishText(saved.includes(String(prod.id)));
+    wbtn.addEventListener('click', ()=>{
+      let w = JSON.parse(localStorage.getItem('wishlist')||'[]').map(String);
+      if(w.includes(String(prod.id))) w = w.filter(x=>x!==String(prod.id));
+      else w.push(String(prod.id));
+      localStorage.setItem('wishlist', JSON.stringify(w));
+      setWishText(w.includes(String(prod.id)));
+    });
+  }
+
+  const qtyMinus = document.getElementById('qty-minus') || document.querySelector('.pengurangan');
+  const qtyPlus = document.getElementById('qty-plus') || document.querySelector('.penambahan');
+  const qtyTotalEl = document.getElementById('qty-total') || document.getElementById('total_produk');
+  let qty = 1;
+  if (qtyTotalEl) qtyTotalEl.textContent = String(qty);
+  if (qtyMinus && qtyPlus && qtyTotalEl) {
+    qtyMinus.addEventListener('click', ()=>{ qty = Math.max(1, qty-1); qtyTotalEl.textContent = String(qty); });
+    qtyPlus.addEventListener('click', ()=>{ qty = qty+1; qtyTotalEl.textContent = String(qty); });
+  }
+
+  const cartBtn = document.getElementById('add-cart-btn') || document.querySelector('.add-cart');
+  if (cartBtn) {
+    cartBtn.addEventListener('click', ()=>{
+      const existing = cart.find(x=>String(x.id)===String(prod.id));
+      const priceNum = parsePriceToNumber(prod.price);
+      if(existing) existing.qty += qty; else cart.push({ id: prod.id, name: prod.name, price: priceNum, qty });
+      localStorage.setItem('cart', JSON.stringify(cart));
+      alert((prod.name || 'Produk') + ' ditambahkan ke keranjang.');
+    });
+  }
+
+  const track = document.getElementById('recommendations-track') || document.querySelector('.rekomendasi-track');
+  if (track) {
+    track.innerHTML = '';
+    const others = dataset.filter(p=>String(p.id)!==String(prod.id));
+    shuffleArray(others);
+    others.slice(0,6).forEach(p=>{
+      const card = document.createElement('div');
+      card.className = 'produk-card';
+      card.innerHTML = `
+        <div class="produk-header">
+          <i>★</i>
+          <div>
+            <h4>${p.category || 'Produk'}</h4>
+            <p>${p.name}</p>
+          </div>
+        </div>
+        <div class="produk-body">
+          <img src="${p.thumb || p.img || p.image || ''}" alt="${p.name || ''}">
+          <h5>${p.name || ''}</h5>
+          <div class="subtitle">${formatRupiah(p.price)}</div>
+          <div class="buttons">
+            <button class="add-cart">Tambah</button>
+            <button class="btn-detail">Detail</button>
+          </div>
+        </div>
+      `;
+      card.querySelector('.add-cart').addEventListener('click', ()=>{
+        const priceNum = parsePriceToNumber(p.price);
+        const existing = cart.find(x=>String(x.id)===String(p.id));
+        if(existing) existing.qty += 1; else cart.push({ id: p.id, name: p.name, price: priceNum, qty: 1 });
+        localStorage.setItem('cart', JSON.stringify(cart));
+        alert((p.name || 'Produk') + ' ditambahkan ke keranjang.');
+      });
+      card.querySelector('.btn-detail').addEventListener('click', ()=>{ window.location.href = resolveDetailUrl(p.id); });
+      track.appendChild(card);
+    });
+  }
+}
+
+renderProduct();
+// ==== END product-detail.js ====
+
 /* ============================
    1️⃣ MODEL SELECT ACTIVE STATE
    ============================ */
@@ -22,37 +295,39 @@ document.addEventListener("DOMContentLoaded", () => {
   const descContent = document.getElementById("desc-content");
   const infoBtn = document.querySelector(".info-btn");
 
-  // Default
-  specContent.style.display = "block";
-  descContent.style.display = "none";
-  infoBtn.textContent = "Tutup informasi produk";
+  if (specContent) specContent.style.display = "block";
+  if (descContent) descContent.style.display = "none";
+  if (infoBtn) infoBtn.textContent = "Tutup informasi produk";
 
-  // Switch tabs
-  specTab.addEventListener("click", () => {
-    specTab.classList.add("active");
-    descTab.classList.remove("active");
-    specContent.style.display = "block";
-    descContent.style.display = "none";
-  });
+  if (specTab && descTab && specContent && descContent) {
+    specTab.addEventListener("click", () => {
+      specTab.classList.add("active");
+      descTab.classList.remove("active");
+      specContent.style.display = "block";
+      descContent.style.display = "none";
+    });
 
-  descTab.addEventListener("click", () => {
-    descTab.classList.add("active");
-    specTab.classList.remove("active");
-    specContent.style.display = "none";
-    descContent.style.display = "block";
-  });
+    descTab.addEventListener("click", () => {
+      descTab.classList.add("active");
+      specTab.classList.remove("active");
+      specContent.style.display = "none";
+      descContent.style.display = "block";
+    });
+  }
 
-  // Show / hide content
-  infoBtn.addEventListener("click", () => {
-    const tabContent = document.querySelector(".tab-content");
-    if (tabContent.style.display === "none") {
-      tabContent.style.display = "block";
-      infoBtn.textContent = "Tutup informasi produk";
-    } else {
-      tabContent.style.display = "none";
-      infoBtn.textContent = "Lihat informasi produk";
-    }
-  });
+  if (infoBtn) {
+    infoBtn.addEventListener("click", () => {
+      const tabContent = document.querySelector(".tab-content");
+      if (!tabContent) return;
+      if (tabContent.style.display === "none") {
+        tabContent.style.display = "block";
+        infoBtn.textContent = "Tutup informasi produk";
+      } else {
+        tabContent.style.display = "none";
+        infoBtn.textContent = "Lihat informasi produk";
+      }
+    });
+  }
 });
 
 /* ============================
@@ -65,7 +340,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!track) return;
 
-  // Clone for continuous loop
   if (!track.dataset.cloned) {
     const cards = [...track.children];
     cards.forEach(card => track.appendChild(card.cloneNode(true)));
@@ -85,17 +359,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 15);
   }
 
-  function stopScroll() {
-    clearInterval(scrollInterval);
-  }
+  function stopScroll() { clearInterval(scrollInterval); }
 
   startScroll();
 
-  // Pause when hovered
   track.addEventListener("mouseenter", stopScroll);
   track.addEventListener("mouseleave", startScroll);
 
-  // Button controls
   leftBtn?.addEventListener("click", () => {
     stopScroll();
     track.scrollBy({ left: -250, behavior: "smooth" });
@@ -108,30 +378,12 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(startScroll, 2000);
   });
 
-  // Drag-to-scroll
-  let isDown = false;
-  let startX;
-  let scrollLeft;
-
-  track.addEventListener("mousedown", (e) => {
-    isDown = true;
-    startX = e.pageX - track.offsetLeft;
-    scrollLeft = track.scrollLeft;
-    stopScroll();
-  });
-
+  let isDown = false; let startX; let scrollLeft;
+  track.addEventListener("mousedown", (e) => { isDown = true; startX = e.pageX - track.offsetLeft; scrollLeft = track.scrollLeft; stopScroll(); });
   track.addEventListener("mouseleave", () => (isDown = false));
-  track.addEventListener("mouseup", () => {
-    isDown = false;
-    startScroll();
-  });
-
+  track.addEventListener("mouseup", () => { isDown = false; startScroll(); });
   track.addEventListener("mousemove", (e) => {
-    if (!isDown) return;
-    e.preventDefault();
-    const x = e.pageX - track.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    track.scrollLeft = scrollLeft - walk;
+    if (!isDown) return; e.preventDefault(); const x = e.pageX - track.offsetLeft; const walk = (x - startX) * 1.5; track.scrollLeft = scrollLeft - walk;
   });
 });
 
@@ -143,7 +395,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const mainImg = document.getElementById("main-img");
   const mainWrapper = document.querySelector(".main-image-wrapper");
 
-  // Thumbnail click
+  if (!mainImg || !mainWrapper) return;
+
   thumbnails.forEach((thumb) => {
     thumb.addEventListener("click", () => {
       thumbnails.forEach(t => t.classList.remove("active"));
@@ -152,50 +405,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Zoom toggle and pan
-  let isZoomed = false;
-  let isDragging = false;
-  let startX, startY, moveX = 0, moveY = 0;
+  let isZoomed = false; let isDragging = false; let startX, startY, moveX = 0, moveY = 0;
 
   mainWrapper.addEventListener("click", () => {
     isZoomed = !isZoomed;
-    if (isZoomed) {
-      mainImg.style.transform = "scale(2)";
-      mainImg.style.cursor = "grab";
-    } else {
-      mainImg.style.transform = "scale(1)";
-      mainImg.style.cursor = "default";
-      moveX = moveY = 0;
-      mainImg.style.transformOrigin = "center center";
-      mainImg.style.left = "0";
-      mainImg.style.top = "0";
-    }
+    if (isZoomed) { mainImg.style.transform = "scale(2)"; mainImg.style.cursor = "grab"; }
+    else { mainImg.style.transform = "scale(1)"; mainImg.style.cursor = "default"; moveX = moveY = 0; mainImg.style.transformOrigin = "center center"; mainImg.style.left = "0"; mainImg.style.top = "0"; }
   });
 
   mainWrapper.addEventListener("mousedown", (e) => {
-    if (!isZoomed) return;
-    isDragging = true;
-    mainImg.style.cursor = "grabbing";
-    startX = e.pageX - moveX;
-    startY = e.pageY - moveY;
+    if (!isZoomed) return; isDragging = true; mainImg.style.cursor = "grabbing"; startX = e.pageX - moveX; startY = e.pageY - moveY;
   });
-
-  mainWrapper.addEventListener("mouseup", () => {
-    isDragging = false;
-    if (isZoomed) mainImg.style.cursor = "grab";
-  });
-
-  mainWrapper.addEventListener("mouseleave", () => {
-    isDragging = false;
-    if (isZoomed) mainImg.style.cursor = "grab";
-  });
-
+  mainWrapper.addEventListener("mouseup", () => { isDragging = false; if (isZoomed) mainImg.style.cursor = "grab"; });
+  mainWrapper.addEventListener("mouseleave", () => { isDragging = false; if (isZoomed) mainImg.style.cursor = "grab"; });
   mainWrapper.addEventListener("mousemove", (e) => {
-    if (!isDragging || !isZoomed) return;
-    e.preventDefault();
-    moveX = e.pageX - startX;
-    moveY = e.pageY - startY;
-    mainImg.style.transform = `scale(2) translate(${moveX / 2}px, ${moveY / 2}px)`;
+    if (!isDragging || !isZoomed) return; e.preventDefault(); moveX = e.pageX - startX; moveY = e.pageY - startY; mainImg.style.transform = `scale(2) translate(${moveX / 2}px, ${moveY / 2}px)`;
   });
 });
 

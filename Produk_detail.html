@@ -8,7 +8,32 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="Produk_detail/Produk_detail.css">
-
+    <style>
+      /* Hero top waving element */
+      @property --tx { syntax: '<length>'; inherits: false; initial-value: 0px; }
+      @property --ty { syntax: '<length>'; inherits: false; initial-value: 0px; }
+      .hero-section { --wave-dy: 0px; overflow: visible; }
+      /* Align wave between the side stripes (counter hero 1rem padding), place behind navbar */
+      .hero-wave { position:absolute; top:calc(-1 * max(var(--nav-safe-area), env(safe-area-inset-top)) - 8px); left:calc(-1rem - var(--stripe-total) - 6px); right:calc(-1rem - var(--stripe-total) - 6px); height:120px; overflow:hidden; z-index:0; pointer-events:none; }
+      .hero-wave__svg { width:100%; height:100%; display:block; }
+      /* Improved motion: decoupled horizontal drift (linear) + gentle vertical bob */
+      .hero-wave .wave { fill:#543310; opacity:.55; mix-blend-mode:plus-lighter; transform-origin:50% 0%; will-change:transform; animation: waveX var(--dur,16s) linear infinite, waveY calc(var(--dur,16s) * 1.5) ease-in-out infinite; transform: translate3d(var(--tx), calc(var(--y,0px) + var(--wave-dy) + var(--ty)), 0); }
+      .hero-wave .wave--1 { --dur:14s; --y:0px;  --amp:4px;  opacity:.5;  animation-delay:-1s; }
+      .hero-wave .wave--2 { --dur:16s; --y:8px;  --amp:6px;  opacity:.35; animation-delay:-2s; }
+      .hero-wave .wave--3 { --dur:20s; --y:14px; --amp:8px;  opacity:.25; animation-delay:-3s; }
+      @keyframes waveX {
+        from { --tx: 0px; }
+        to   { --tx: -64px; }
+      }
+      @keyframes waveY {
+        0%   { --ty: 0px; }
+        50%  { --ty: var(--amp,6px); }
+        100% { --ty: 0px; }
+      }
+            body.light .hero-wave .wave { mix-blend-mode: normal; opacity:.45; }
+      body.dark .hero-wave .wave { fill:#F9F4E1; }
+      @media (max-width: 680px) { .hero-wave { height: 90px; left:calc(-1rem - var(--stripe-total) - 6px); right:calc(-1rem - var(--stripe-total) - 6px); } }
+    </style>
 </head>
 
 <body>
@@ -16,6 +41,17 @@
         <div class="page-wrapper-v2">
             <!-- Navbar placeholder -->
             <div class="navbar-space"></div>
+
+            <!-- HERO -->
+            <section class="hero-section" id="home">
+              <div class="hero-wave" aria-hidden="true">
+                <svg class="hero-wave__svg" viewBox="0 0 1200 140" preserveAspectRatio="none">
+                  <path class="wave wave--1" d="M0,40 C200,80 400,0 600,40 C800,80 1000,0 1200,40 L1200,0 L0,0 Z"></path>
+                  <path class="wave wave--2" d="M0,60 C200,100 400,20 600,60 C800,100 1000,20 1200,60 L1200,0 L0,0 Z"></path>
+                  <path class="wave wave--3" d="M0,80 C200,120 400,40 600,80 C800,120 1000,40 1200,80 L1200,0 L0,0 Z"></path>
+                </svg>
+              </div>
+            </section>
 
             <!-- Breadcrumb -->
             <div class="breadcrumb">
@@ -33,67 +69,29 @@
                 <!-- Product Detail Section -->
                 <section class="product-section">
                     <div class="product-images">
-                        <div class="thumbnail-list" id="thumbnail-list">
-                            <img src="Produk_detail/Img/Logo_company.jpg" alt="Thumbnail 1">
-                            <img src="Produk_detail/Img/Logo_company.jpg" alt="Thumbnail 2">
-                            <img src="Produk_detail/Img/Screenshot 2025-11-11 121801.png" alt="Thumbnail 3">
-                            <img src="Produk_detail/Img/Logo_company.jpg" alt="Thumbnail 4">
-                            <img src="Produk_detail/Img/Logo_company.jpg" alt="Thumbnail 5">
-
-                        </div>
+                        <div class="thumbnail-list" id="thumbnail-list"></div>
                         <div class="main-image-wrapper">
-                            <img id="main-img" src="Produk_detail/Img/Logo_company.jpg" alt="Product" class="main">
+                            <img id="main-img" src="" alt="Product" class="main">
                         </div>
                     </div>
 
                     <div class="product-info">
-                        <h2 id="product-name">Product Name</h2>
+                        <h2 id="product-name"></h2>
 
                         <div class="rates">
-                            <h3 id="Terjual"><span id="Jumlah_terjual">120</span> Terjual</h3>
-                            <div class="Bintang">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-regular fa-star"></i>
-                            </div>
-                            <p id="product-price" class="price">RpXX.XXX</p>
+                            <h3 id="Terjual"><span id="Jumlah_terjual"></span> Terjual</h3>
+                            <div class="Bintang"></div>
+                            <p id="product-price" class="price"></p>
                         </div>
 
                         <div class="action-buttons">
                             <h4> Pilih motif </h4>
-                            <div class="model_produk" style="display: flex;">
-                                <div class="Motif_1">
-                                    <img src="Produk_detail/Img/Logo_company.jpg" alt="">
-                                    <h4 id="color/theme">bunga</h4>
-                                </div>
-                                <div class="Motif_2">
-                                    <img src="Produk_detail/Img/Logo_company.jpg" alt="Thumbnail 1">
-                                    <h4 id="color/theme">bunga</h4>
-                                </div>
-                                <div class="Motif_3">
-                                    <img src="Produk_detail/Img/Logo_company.jpg" alt="Thumbnail 1">
-                                    <h4 id="color/theme">bunga</h4>
-                                </div>
-                                <div class="Motif_4">
-                                    <img src="Produk_detail/Img/Logo_company.jpg" alt="Thumbnail 1">
-                                    <h4 id="color/theme">bunga</h4>
-                                </div>
-                                <div class="Motif_5">
-                                    <img src="Produk_detail/Img/Logo_company.jpg" alt="Thumbnail 1">
-                                    <h4 id="color/theme">bunga</h4>
-                                </div>
-                            </div>
+                            <div class="model_produk" style="display: flex;"></div>
                         </div>
                         <div class="model_produk_fun">
-                            <h4> Pilih model </h4>
-                            <div class="Model_1">
-                                <h4 id="color/theme">Resleting</h4>
-                            </div>
-                            <div class="Model_1">
-                                <h4 id="color/theme">Pengait</h4>
-                            </div>
+                            <h4>Pilih Model</h4>
+                            <!-- Model cards akan dirender dari products.js -->
+                            <div class="Model_1"></div>
                         </div>
                         <div class="product-actions">
                             <div class="Jumlah_produk" style="display: flex; align-items: center; gap: 10px;">
@@ -134,168 +132,21 @@
 
                 <div class="tab-content">
                     <!-- Spesifikasi -->
-                    <div id="spec-content" class="specs active">
-                        <table>
-                            <tr>
-                                <td>Kategori</td>
-                                <td>Tas Selempang & Bahu Wanita</td>
-                            </tr>
-                            <tr>
-                                <td>Bahan</td>
-                                <td>Purun</td>
-                            </tr>
-                            <tr>
-                                <td>Ukuran Produk</td>
-                                <td>10 cm × 2 cm × 15 cm</td>
-                            </tr>
-                            <tr>
-                                <td>Panjang Tali</td>
-                                <td>115 cm</td>
-                            </tr>
-                            <tr>
-                                <td>Keterangan Tambahan</td>
-                                <td>
-                                    <ul>
-                                        <li>Muat HP dan dompet kecil</li>
-                                        <li>Cocok digunakan untuk jalan-jalan</li>
-                                    </ul>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
+                    <div id="spec-content" class="specs active"></div>
 
                     <!-- Deskripsi -->
-                    <div id="desc-content" class="description">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                            labore et dolore magna aliqua.
-                            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                            commodo consequat.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                            labore et dolore magna aliqua.
-                            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                            commodo consequat.
-                        </p>
-                    </div>
+                    <div id="desc-content" class="description"></div>
                 </div>
 
                 <button class="info-btn">Tutup informasi produk</button>
             </section>
 
-            <!-- Recommended Products -->
             <section class="rekomendasi-section">
-                <h2>Rekomendasi Produk Lainnya</h2>
-                <div class="rekomendasi-container">
-                    <button class="scroll-btn left"><i class="fa-solid fa-chevron-left"></i></button>
-                    <button class="scroll-btn right"><i class="fa-solid fa-chevron-right"></i></button>
-
-                    <div class="rekomendasi-track">
-                        <!-- CARD 1 -->
-                        <div class="produk-card">
-                            <div class="produk-header">
-                                <i class="fa-solid fa-leaf"></i>
-                                <div>
-                                    <h4>Header</h4>
-                                    <p>Subhead</p>
-                                </div>
-                            </div>
-                            <div class="produk-body">
-                                <img src="Produk_detail/Img/Logo_company.jpg" alt="">
-                                <h5>Title</h5>
-                                <p class="subtitle">Subtitle</p>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor</p>
-                                <div class="buttons">
-                                    <button class="secondary">Secondary</button>
-                                    <button class="primary">Primary</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- CARD 2 -->
-                        <div class="produk-card">
-                            <div class="produk-header">
-                                <i class="fa-solid fa-star"></i>
-                                <div>
-                                    <h4>Header</h4>
-                                    <p>Subhead</p>
-                                </div>
-                            </div>
-                            <div class="produk-body">
-                                <img src="Produk_detail/Img/Logo_company.jpg" alt="">
-                                <h5>Title</h5>
-                                <p class="subtitle">Subtitle</p>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor</p>
-                                <div class="buttons">
-                                    <button class="secondary">Secondary</button>
-                                    <button class="primary">Primary</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- CARD 3 -->
-                        <div class="produk-card">
-                            <div class="produk-header">
-                                <i class="fa-solid fa-gem"></i>
-                                <div>
-                                    <h4>Header</h4>
-                                    <p>Subhead</p>
-                                </div>
-                            </div>
-                            <div class="produk-body">
-                                <img src="Produk_detail/Img/Logo_company.jpg" alt="">
-                                <h5>Title</h5>
-                                <p class="subtitle">Subtitle</p>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor</p>
-                                <div class="buttons">
-                                    <button class="secondary">Secondary</button>
-                                    <button class="primary">Primary</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- CARD 4 -->
-                        <div class="produk-card">
-                            <div class="produk-header">
-                                <i class="fa-solid fa-basket-shopping"></i>
-                                <div>
-                                    <h4>Header</h4>
-                                    <p>Subhead</p>
-                                </div>
-                            </div>
-                            <div class="produk-body">
-                                <img src="Produk_detail/Img/Logo_company.jpg" alt="">
-                                <h5>Title</h5>
-                                <p class="subtitle">Subtitle</p>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor</p>
-                                <div class="buttons">
-                                    <button class="secondary">Secondary</button>
-                                    <button class="primary">Primary</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Duplicate all for infinite loop -->
-                        <div class="produk-card clone">
-                            <div class="produk-header"><i class="fa-solid fa-leaf"></i>
-                                <div>
-                                    <h4>Header</h4>
-                                    <p>Subhead</p>
-                                </div>
-                            </div>
-                            <div class="produk-body">
-                                <img src="Produk_detail/Img/Logo_company.jpg" alt="">
-                                <h5>Title</h5>
-                                <p>Subtitle</p>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor</p>
-                                <div class="buttons">
-                                    <button class="secondary">Secondary</button><button class="primary">Primary</button>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
+                <h3>Rekomendasi Produk</h3>
+                <div class="rekomendasi-track"></div>
+                <div class="rekomendasi-scroll">
+                    <span class="scroll-btn left">&lt;</span>
+                    <span class="scroll-btn right">&gt;</span>
                 </div>
             </section>
         </div>
@@ -303,7 +154,7 @@
     </section>
 
     <!-- Font Awesome -->
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <!-- Font Awesome kit dihapus; gunakan CSS lokal atau CDN stabil jika perlu -->
 
     <!-- Footer -->
     <footer class="footer">
@@ -330,8 +181,7 @@
     </footer>
     </div>
     </div>
-<script src="Produk_detail/Produk_detail.js"></script>
+   <script defer src="Product/products.js?v=2"></script>
+   <script defer src="Produk_detail/Produk_detail.js?v=7"></script>
 </body>
-
-
 </html>

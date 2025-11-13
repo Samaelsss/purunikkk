@@ -1,0 +1,97 @@
+// products.js - data untuk halaman detail, seragam dengan Produk_detail.html
+
+const PRODUCTS = [
+  {
+    id: '1',
+    name: 'Slingbag Purun Lala',
+    price: 249000,
+    category: 'Tas Selempang & Bahu Wanita',
+    img: 'Product/img/IMG_4099.jpg',
+    images: [
+      'Product/img/IMG_4099.jpg',
+      'Product/img/IMG_4098.jpg',
+      'Product/img/IMG_4103.jpg'
+    ],
+    description: 'Tote Bag klasik bergaya minimalis dengan bahan purun, cocok untuk kegiatan sehari-hari.',
+    sold: 120,
+    rating: 4,
+    motifs: [
+      { name: 'Bunga', img: 'Produk_detail/Img/Logo_company.jpg' },
+      { name: 'Anyaman', img: 'Produk_detail/Img/Logo_company.jpg' },
+      { name: 'Monokrom', img: 'Produk_detail/Img/Logo_company.jpg' },
+      { name: 'Garis', img: 'Produk_detail/Img/Logo_company.jpg' },
+      { name: 'Polkadot', img: 'Produk_detail/Img/Logo_company.jpg' }
+    ],
+    models: ['Resleting', 'Pengait'],
+    specs: {
+      'Kategori': 'Tas Selempang & Bahu Wanita',
+      'Bahan': 'Purun',
+      'Ukuran Produk': '10 cm × 2 cm × 15 cm',
+      'Panjang Tali': '115 cm',
+      'Keterangan Tambahan': [
+        'Muat HP dan dompet kecil',
+        'Cocok digunakan untuk jalan-jalan'
+      ]
+    }
+  },
+  {
+    id: 'dompet-minimalis',
+    name: 'Dompet Minimalis',
+    price: 99000,
+    category: 'Aksesori',
+    img: 'Product/img/IMG_4091.jpg',
+    images: [
+      'Product/img/IMG_4091.jpg',
+      'Product/img/IMG_4090.jpg',
+      'Product/img/IMG_4094.jpg'
+    ],
+    description: 'Dompet slim untuk kartu dan sedikit uang tunai, desain tipis nyaman di saku.',
+    sold: 65,
+    rating: 4,
+    motifs: [
+      { name: 'Plain', img: 'Produk_detail/Img/Logo_company.jpg' },
+      { name: 'Emboss', img: 'Produk_detail/Img/Logo_company.jpg' }
+    ],
+    models: ['Snap', 'Resleting'],
+    specs: {
+      'Kategori': 'Aksesori',
+      'Bahan': 'Kanvas + PU Trim',
+      'Ukuran Produk': '10 cm × 8 cm × 1.5 cm',
+      'Panjang Tali': '-',
+      'Keterangan Tambahan': [
+        'Muatan 6 kartu',
+        'Lapisan dalam halus'
+      ]
+    }
+  },
+  {
+    id: 'tas-selempang-kasual',
+    name: 'Tas Selempang Kasual',
+    price: 180000,
+    category: 'Tas',
+    img: 'Product/img/IMG_4106.jpg',
+    images: [
+      'Product/img/IMG_4106.jpg',
+      'Product/img/IMG_4105.jpg',
+      'Product/img/IMG_4104.jpg'
+    ],
+    description: 'Tas selempang unisex ringan, nyaman saat bepergian, tali dapat disesuaikan.',
+    sold: 87,
+    rating: 5,
+    motifs: [
+      { name: 'Klasik', img: 'Produk_detail/Img/Logo_company.jpg' },
+      { name: 'Kasual', img: 'Produk_detail/Img/Logo_company.jpg' }
+    ],
+    models: ['Resleting'],
+    specs: {
+      'Kategori': 'Tas',
+      'Bahan': 'Nylon & PU',
+      'Ukuran Produk': '22 cm × 18 cm × 8 cm',
+      'Panjang Tali': '120 cm (adjustable)',
+      'Keterangan Tambahan': [
+        'Ringan',
+        'Kompartemen utama + saku depan'
+      ]
+    }
+  }
+];
