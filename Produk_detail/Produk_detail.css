@@ -109,7 +109,7 @@ body::after {
 }
 
 .page-wrapper-v2 {
-  margin-top: 10vw;
+  margin-top: 8vw;
   margin-right: 2vh;
   margin-left: 2vh;
 }
@@ -209,7 +209,7 @@ body::after {
    =============================== */
 .product-section {
   display: flex;
-  gap: 40px;
+  gap: 10px;
   padding: 30px 3px;
   align-items: flex-start;
 }
@@ -224,11 +224,10 @@ body::after {
 .thumbnail-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  background-color: #d2b08b;
+  background-color: #D7B290;
   padding: 10px 10px;
   border-radius: 15px;
-  margin-left: -2vw;
+  margin-left: 0;
 }
 
 .thumbnail-list img {
@@ -248,25 +247,28 @@ body::after {
 
 /* Image Wrapper */
 .main-image-wrapper {
-  background-color: #5e3a1f;
+  background-color:#D7B290;
   border-radius: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
   position: relative;
-  width: 37vw;
-  height: 37.5vw;
+  width: 30vw;
+  height: 30vw;
 }
 
 .main-image-wrapper img.main {
-  width: 430px;
-  height: auto;
+  width: 100%;
   border-radius: 10px;
+  border: 12px solid #D7B290;
   object-fit: cover;
   transition: transform 0.3s ease;
   cursor: zoom-in;
   user-select: none;
+}
+.img.main{
+  border-radius: 10px;
 }
 
 .thumbnail-list {
@@ -276,8 +278,8 @@ body::after {
 }
 
 .thumbnail-list img {
-  width: 70px;
-  height: 70px;
+  width: 100px;
+  height: 100px;
   border-radius: 10px;
   border: 2px solid #c8a776;
   background-color: #fff;
@@ -293,26 +295,27 @@ body::after {
    PRODUCT INFO CARD (smaller fit)
    =============================== */
 .product-info {
-  flex: 1;
   background: #fdf9f3;
-  border: 2px solid #d3b890;
   border-radius: 12px;
-  padding: 8px 15px;
-  margin-left: -2vw;
+  padding: 12px 30px;
+  width: 60vw;
+  height: 70vh;
 }
 
 .product-info h2 {
-  font-size: 40px;
+  font-size: 2rem;
   color: #5e3a1f;
   margin-top: 0;
   margin-bottom: 8px;
+  text-align: left;
 }
 
 .product-info h4 {
-  font-size: 20px;
+  font-size: 0.8rem;
   color: #5e3a1f;
   margin-top: 0;
   margin-bottom: 8px;
+   text-align: left;
 }
 /* ===============================
    RATES SECTION
@@ -350,10 +353,11 @@ body::after {
    PRICE
    =============================== */
 .price {
-  font-size: 18px;
+  font-size: 2rem;
   color: #7a5230;
   font-weight: 700;
-  margin: 1px 0 1px;
+  margin: 20px 0 20px;
+  text-align: left;
 }
 
 /* ===============================
@@ -366,7 +370,7 @@ body::after {
 
 .model_produk h4,
 .model_produk_fun h4 {
-  font-size: 20px;
+  font-size: 1rem;
   color: #5e3a1f;
   font-weight: 600;
 }
@@ -383,7 +387,7 @@ body::after {
   border: 1.5px solid #d3b890;
   border-radius: 10px;
   padding: 6px;
-  width: 60px;
+  width: 100px;
   cursor: pointer;
   transition: all 0.25s ease;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* soft depth */
