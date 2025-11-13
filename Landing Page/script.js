@@ -413,9 +413,32 @@
         'Timeless Natural Aesthetics'
       ];
       var i = 0;
+      var reduce = false;
+      try {
+        reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+      } catch (e) {}
       function tick(){
-        el.textContent = phrases[i % phrases.length];
-        i++;
+        var next = phrases[i % phrases.length];
+        if (reduce) {
+          el.textContent = next;
+          i++;
+          return;
+        }
+        el.classList.remove('hero__rotating--enter');
+        el.classList.add('hero__rotating--exit');
+        var onOutEnd = function(){
+          el.removeEventListener('animationend', onOutEnd);
+          el.textContent = next;
+          void el.offsetWidth;
+          el.classList.remove('hero__rotating--exit');
+          el.classList.add('hero__rotating--enter');
+          var onInEnd = function(){
+            el.removeEventListener('animationend', onInEnd);
+          };
+          el.addEventListener('animationend', onInEnd, { once: true });
+          i++;
+        };
+        el.addEventListener('animationend', onOutEnd, { once: true });
       }
       tick();
       setInterval(tick, 2200);
