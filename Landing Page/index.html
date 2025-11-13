@@ -17,7 +17,7 @@
       @property --ty { syntax: '<length>'; inherits: false; initial-value: 0px; }
       .hero-section { --wave-dy: 0px; overflow: visible; }
       /* Align wave between the side stripes (counter hero 1rem padding), place behind navbar */
-      .hero-wave { position:absolute; top:calc(-1 * max(var(--nav-safe-area), env(safe-area-inset-top)) - 8px); left:calc(-1rem - var(--stripe-total) - 6px); right:calc(-1rem - var(--stripe-total) - 6px); height:120px; overflow:hidden; z-index:0; pointer-events:none; }
+      .hero-wave { position:absolute; top:calc(-1 * max(var(--nav-safe-area), env(safe-area-inset-top)) - 8px); left:50%; transform:translateX(-50%); width:95vw; height:120px; overflow:hidden; z-index:0; pointer-events:none; }
       .hero-wave__svg { width:100%; height:100%; display:block; }
       /* Improved motion: decoupled horizontal drift (linear) + gentle vertical bob */
       .hero-wave .wave { fill:#543310; opacity:.55; mix-blend-mode:plus-lighter; transform-origin:50% 0%; will-change:transform; animation: waveX var(--dur,16s) linear infinite, waveY calc(var(--dur,16s) * 1.5) ease-in-out infinite; transform: translate3d(var(--tx), calc(var(--y,0px) + var(--wave-dy) + var(--ty)), 0); }
@@ -35,7 +35,81 @@
       }
             body.light .hero-wave .wave { mix-blend-mode: normal; opacity:.45; }
       body.dark .hero-wave .wave { fill:#F9F4E1; }
-      @media (max-width: 680px) { .hero-wave { height: 90px; left:calc(-1rem - var(--stripe-total) - 6px); right:calc(-1rem - var(--stripe-total) - 6px); } }
+      /* Light mode styling for bottom waves: use the lightest palette for maximum contrast */
+      body.light .hero-wave-bottom .wave { fill: #D7B290; mix-blend-mode: normal; opacity: .65; }
+      body.dark .hero-wave-bottom .wave { mix-blend-mode: plus-lighter; }
+      @media (max-width: 680px) { .hero-wave { height: 90px; width:95vw; left:50%; transform:translateX(-50%); } }
+
+      /* Bottom wave transition into history-section */
+      .hero-wave-bottom { position:absolute; bottom:-1px; left:50%; transform:translateX(-50%); width:95vw; height:120px; overflow:hidden; z-index:0; pointer-events:none; }
+      .hero-wave-bottom__svg { width:100%; height:100%; display:block; transform: scaleY(-1); }
+      .hero-wave-bottom .wave { opacity:.6; transform-origin:50% 100%; will-change:transform; animation: waveX var(--dur,18s) linear infinite, waveY calc(var(--dur,18s) * 1.5) ease-in-out infinite; transform: translate3d(var(--tx), calc(var(--y,0px) + var(--ty)), 0); }
+      .hero-wave-bottom .wave--1 { --dur:16s; --y:0px;  --amp:5px;  opacity:.6;  animation-delay:-0.5s; }
+      .hero-wave-bottom .wave--2 { --dur:18s; --y:8px;  --amp:7px;  opacity:.45; animation-delay:-1.5s; }
+      .hero-wave-bottom .wave--3 { --dur:22s; --y:14px; --amp:9px;  opacity:.35; animation-delay:-2.5s; }
+      @media (max-width: 680px) { .hero-wave-bottom { height: 90px; width:95vw; left:50%; transform:translateX(-50%) scaleY(1); } }
+
+      /* Seamless blend between hero and history */
+      .hero-history-blend {
+        position: absolute;
+        bottom: -1px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 95vw;
+        height: 150px;
+        pointer-events: none;
+        z-index: 0;
+        background:
+          linear-gradient(
+            to bottom,
+            rgba(84,51,16,0) 0%,        /* transparent from hero */
+            rgba(84,51,16,0.55) 35%,    /* hero bg tone */
+            rgba(115,81,44,0.55) 70%,   /* mid tone to match history */
+            rgba(84,51,16,0.75) 100%
+          );
+        mix-blend-mode: multiply;
+      }
+
+      .history-top-blend {
+        position: absolute;
+        top: -80px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 95vw;
+        height: 160px;
+        pointer-events: none;
+        z-index: 0;
+        background:
+          linear-gradient(
+            to bottom,
+            rgba(84,51,16,0.85) 0%,     /* deep hero tone overlapping into history */
+            rgba(115,81,44,0.6) 50%,    /* history mid tone */
+            rgba(84,51,16,0) 100%       /* fade into history */
+          );
+        mix-blend-mode: multiply;
+      }
+      /* Light mode: brighten blends so dark text stays highly readable */
+      body.light .hero-history-blend {
+        background:
+          linear-gradient(
+            to bottom,
+            rgba(249,244,225,0) 0%,
+            rgba(249,244,225,0.45) 35%,
+            rgba(249,244,225,0.55) 70%,
+            rgba(249,244,225,0.65) 100%
+          );
+        mix-blend-mode: screen;
+      }
+      body.light .history-top-blend {
+        background:
+          linear-gradient(
+            to bottom,
+            rgba(249,244,225,0.75) 0%,
+            rgba(249,244,225,0.5) 50%,
+            rgba(249,244,225,0) 100%
+          );
+        mix-blend-mode: screen;
+      }
     </style>
 </head>
 <body>
@@ -104,14 +178,26 @@
           </div>
         </div>
       </div>
-      <button class="scroll-cue" data-scroll="#sejarah-purunik" aria-label="Scroll to next section">
-        <span class="scroll-cue__mouse"></span>
-        <span class="scroll-cue__arrow">▾</span>
-      </button>
+      <div class="hero-wave-bottom" aria-hidden="true">
+        <svg class="hero-wave-bottom__svg" viewBox="0 0 1200 140" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="histWaveGrad" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0%" stop-color="#543310" />
+              <stop offset="50%" stop-color="#73512C" />
+              <stop offset="100%" stop-color="#543310" />
+            </linearGradient>
+          </defs>
+          <path class="wave wave--1" d="M0,40 C200,80 400,0 600,40 C800,80 1000,0 1200,40 L1200,0 L0,0 Z" fill="url(#histWaveGrad)"></path>
+          <path class="wave wave--2" d="M0,60 C200,100 400,20 600,60 C800,100 1000,20 1200,60 L1200,0 L0,0 Z" fill="url(#histWaveGrad)"></path>
+          <path class="wave wave--3" d="M0,80 C200,120 400,40 600,80 C800,120 1000,40 1200,80 L1200,0 L0,0 Z" fill="url(#histWaveGrad)"></path>
+        </svg>
+      </div>
+      <div class="hero-history-blend" aria-hidden="true"></div>
     </section>
 
     <!-- SEJARAH -->
     <section class="history-section" id="sejarah-purunik">
+      <div class="history-top-blend" aria-hidden="true"></div>
       <div class="history">
         <div class="history__text">
           <h2 class="section-title">Sejarah Purunik</h2>
@@ -707,11 +793,7 @@
                         <path d="M12 1v2m0 18v2m11-11h-2M3 12H1m16.95 6.95-1.41-1.41M6.46 6.46 5.05 5.05m13.9 0-1.41 1.41M6.46 17.54l-1.41 1.41"></path>
                     </svg>
                 </button>
-
-                <div class="auth-buttons">
-                    <button class="btn-login" id="loginBtn">Login</button>
-                    <button class="btn-register" id="registerBtn">Register</button>
-                </div>
+                
             </div>
         </nav>
     </div>
