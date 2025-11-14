@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="../navbar/navbar.css">
     <link rel="stylesheet" href="../footer/footer.css">
 
-
     <style>
       /* Hero top waving element */
       @property --tx { syntax: '<length>'; inherits: false; initial-value: 0px; }
@@ -233,25 +232,21 @@
 
          <!-- Navigation Container -->
         <div class="products-container">
-            <!-- Previous Button -->
-            <button class="nav-button nav-prev" id="navPrev" aria-label="Previous products">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
-            </button>
+            <!-- Category Filter -->
+            <div class="category-filter" aria-label="Filter berdasarkan kategori">
+                <button class="category-chip active" data-category="all">Semua</button>
+                <button class="category-chip" data-category="tas">Tas</button>
+                <button class="category-chip" data-category="dompet">Dompet</button>
+                <button class="category-chip" data-category="furniture">Furniture</button>
+                <button class="category-chip" data-category="keranjang">Keranjang</button>
+            </div>
 
             <!-- Products Grid -->
             <div class="products-grid" id="productsGrid">
                 <!-- Products will be inserted here by JavaScript -->
             </div>
 
-            <!-- Next Button -->
-            <button class="nav-button nav-next" id="navNext" aria-label="Next products">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-            </button>
-        </div>
+            </div>
 
         <!-- Pagination Controls -->
         <div class="pagination-container">

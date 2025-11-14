@@ -900,6 +900,148 @@ body::after {
     color: var(--dark-color);
 }
 
+/* Products Container with Navigation */
+.products-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0 40px;
+    margin: 40px 0;
+    scroll-margin-top: calc(max(var(--nav-safe-area), 72px) + 16px);
+}
+
+/* Category Filter */
+.category-filter {
+    position: sticky;
+    top: calc(max(var(--nav-safe-area), 72px) + 8px);
+    z-index: 50;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+    justify-content: center;
+    /* Linen-like subtle texture + soft gradient overlay */
+    background:
+      radial-gradient(24px 24px at 30% 20%, rgba(176,143,112,0.08), transparent 60%),
+      radial-gradient(28px 28px at 70% 60%, rgba(84,51,16,0.06), transparent 70%),
+      linear-gradient(180deg, color-mix(in oklab, var(--card) 92%, #fff 8%), color-mix(in oklab, var(--card) 80%, #000 20%));
+    border: 1px solid color-mix(in oklab, var(--border) 85%, #000 15%);
+    border-radius: 16px;
+    padding: 0.8rem 1rem;
+    box-shadow: 0 10px 28px rgba(84, 51, 16, 0.12), 0 1px 0 rgba(255,255,255,0.25) inset;
+    backdrop-filter: saturate(1.15) blur(6px);
+}
+
+.category-chip {
+    appearance: none;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    border: 1.2px solid color-mix(in oklab, var(--medium-light-color) 80%, #000 20%);
+    /* Woven-like subtle pattern + gradient */
+    background:
+      linear-gradient(135deg, rgba(176,143,112,0.08) 0%, rgba(176,143,112,0.0) 40%),
+      linear-gradient(180deg, color-mix(in oklab, var(--very-light-color) 85%, #fff 15%), color-mix(in oklab, var(--very-light-color) 58%, #fff0 42%));
+    color: var(--foreground);
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 650;
+    letter-spacing: 0.2px;
+    cursor: pointer;
+    transition: transform 160ms ease, box-shadow 200ms ease, background 220ms ease, color 160ms ease, border-color 160ms ease, filter 220ms ease;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 1px 8px rgba(84, 51, 16, 0.08);
+    outline: none;
+    will-change: transform, box-shadow, filter;
+}
+
+.category-chip::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: color-mix(in oklab, var(--medium-dark-color) 70%, var(--very-light-color) 30%);
+    box-shadow: 0 0 0 2px rgba(176,143,112,0.2);
+}
+
+.category-chip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(84, 51, 16, 0.18), 0 0 0 2px rgba(176,143,112,0.22);
+    filter: saturate(1.05);
+}
+
+.category-chip:active {
+    transform: translateY(0) scale(0.99);
+    box-shadow: 0 3px 10px rgba(84, 51, 16, 0.12);
+}
+
+/* underline accent animation */
+.category-chip::after {
+    content: '';
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 6px;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--medium-light-color), var(--medium-dark-color));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 220ms ease;
+    opacity: 0.85;
+}
+
+.category-chip:hover::after { transform: scaleX(1); }
+
+.category-chip.active {
+    background: linear-gradient(180deg, color-mix(in oklab, var(--dark-color) 90%, #000 10%), color-mix(in oklab, var(--medium-dark-color) 85%, #000 15%));
+    color: var(--very-light-color);
+    border-color: color-mix(in oklab, var(--dark-color) 85%, #000 15%);
+    box-shadow: 0 10px 24px rgba(84, 51, 16, 0.28), 0 0 0 2px rgba(84,51,16,0.35) inset;
+}
+
+.category-chip.active::after { transform: scaleX(1); }
+
+.category-chip.active::before {
+    background: var(--very-light-color);
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.25), 0 0 0 6px rgba(176,143,112,0.25);
+}
+
+.category-chip:focus-visible {
+    box-shadow: 0 0 0 3px rgba(176,143,112,0.45);
+}
+
+@media (max-width: 520px) {
+    .category-filter { gap: 0.45rem; padding: 0.6rem 0.7rem; backdrop-filter: saturate(1.1) blur(4px); }
+    .category-chip { padding: 0.5rem 0.85rem; font-size: 0.9rem; }
+}
+
+body.dark .category-filter {
+    background:
+      radial-gradient(24px 24px at 30% 20%, rgba(176,143,112,0.10), transparent 60%),
+      radial-gradient(28px 28px at 70% 60%, rgba(249,244,225,0.06), transparent 70%),
+      linear-gradient(180deg, color-mix(in oklab, var(--card) 90%, #000 10%), color-mix(in oklab, var(--card) 78%, #000 22%));
+    border-color: color-mix(in oklab, var(--border) 70%, #000 30%);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.25), 0 1px 0 rgba(255,255,255,0.08) inset;
+}
+
+body.dark .category-chip {
+    background:
+      linear-gradient(135deg, rgba(176,143,112,0.14) 0%, rgba(176,143,112,0.0) 40%),
+      linear-gradient(180deg, color-mix(in oklab, var(--accent-dark) 15%, var(--card) 85%), color-mix(in oklab, var(--card) 80%, #000 20%));
+    border-color: color-mix(in oklab, var(--medium-light-color) 70%, #000 30%);
+    color: var(--secondary);
+}
+
+body.dark .category-chip.active {
+    background: linear-gradient(180deg, color-mix(in oklab, var(--primary-dark) 20%, #000 80%), color-mix(in oklab, var(--accent-dark) 60%, #000 40%));
+    border-color: color-mix(in oklab, var(--accent-dark) 70%, #000 30%);
+    color: var(--secondary-foreground-dark);
+}
 
 /* Product Cards Grid */
 .products-grid {
@@ -1176,64 +1318,9 @@ body::after {
     width: 100%;
     max-width: 1200px;
 }
-/* Products Container with Navigation */
-.products-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 40px;
-    margin: 40px 0;
-}
-
-.nav-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: var(--primary-color);
-    color: var(--light-color);
-    border: none;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    font-size: 24px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    z-index: 10;
-    backdrop-filter: blur(10px);
-    background: rgba(84, 51, 16, 0.9);
-}
-
-.nav-button:hover {
-    background: rgba(107, 68, 28, 0.95);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-}
-
-.nav-button:focus {
-    outline: none;
-    box-shadow: 0 0 0 4px var(--accent-color-translucent);
-}
-
-.nav-prev {
-    left: 15px;
-}
-
-.nav-next {
-    right: 15px;
-}
-
-.nav-button svg {
-    width: 24px;
-    height: 24px;
-    transition: transform 0.3s ease;
-    stroke-width: 2.5;
+/* uttons are deleted */
 /* Responsive Design */
 }
-/* Responsive Design */
 @media (max-width: 1200px) {
     .product-page {
         padding: 0 1.5rem;
@@ -1289,29 +1376,7 @@ body::after {
         font-size: 1.1rem;
     }
     
-    /* Navigation buttons responsive */
-    .products-container {
-        padding: 0 60px;
-    }
-    
-    .nav-button {
-        width: 45px;
-        height: 45px;
-        font-size: 20px;
-    }
-    
-    .nav-prev {
-        left: 5px;
-    }
-    
-    .nav-next {
-        right: 5px;
-    }
-    
-    .nav-button svg {
-        width: 20px;
-        height: 20px;
-    }
+    /* Navigation button styles removed */
 }
 
 @media (max-width: 480px) {
@@ -1354,27 +1419,8 @@ body::after {
         gap: 0.5rem;
         padding: 0 40px;
     }
-    
-    .nav-button {
-        width: 40px;
-        height: 40px;
-        font-size: 18px;
-    }
-    
-    .nav-prev {
-        left: 0;
-    }
-    
-    .nav-next {
-        right: 0;
-    }
-    
-    .nav-button svg {
-        width: 18px;
-        height: 18px;
-    }
 }
-}
+
 
 /* Make navbar sticky in product.html */
 .navbar .container {

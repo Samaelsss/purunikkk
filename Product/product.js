@@ -6,7 +6,6 @@ const RAW_PRODUCTS_DATA = [
         name: 'Slingbag Purun Lala',
         subtitle: 'Sling Bag Purun',
         category: 'purun',
-        description: 'Sling Bag Purun dengan desain unik dan elegan',
         price: 'Rp 25.000',
         icon: '',
         image: 'img/Slingbag-Purun-Lala/01.webp'
@@ -16,7 +15,6 @@ const RAW_PRODUCTS_DATA = [
         name: 'Purun Wall Art',
         subtitle: 'Seni Dinding Purun',
         category: 'purun',
-        description: 'Panel dekorasi purun dengan komposisi kontemporer yang elegan',
         price: 'Rp 250.000',
         icon: '🖼️',
         image: 'img/products/product-002.jpg'
@@ -1036,12 +1034,20 @@ let currentCategory = 'all';
 let filteredProducts = PRODUCTS_DATA;
 let totalPages = Math.ceil(PRODUCTS_DATA.length / ITEMS_PER_PAGE);
 
+// Map UI categories to filtering strategy
+const UI_CATEGORY_MAP = {
+    all: (p) => true,
+    tas: (p) => /tas|bag|sling|backpack|tote/i.test(`${p.name} ${p.subtitle}`),
+    dompet: (p) => /dompet|clutch|wallet/i.test(`${p.name} ${p.subtitle}`),
+    furniture: (p) => /kursi|chair|sofa|meja|table|rak|shelf|lemari|console|bed|headboard|stool|ottoman|lampu|lamp|pendant|ceiling|floor|sconce|divider|panel|cermin|mirror/i.test(`${p.name} ${p.subtitle}`),
+    keranjang: (p) => /keranjang|basket|breadbasket/i.test(`${p.name} ${p.subtitle}`)
+};
+
 // Get filtered products based on category
 function getFilteredProducts() {
-    if (currentCategory === 'all') {
-        return PRODUCTS_DATA;
-    }
-    return PRODUCTS_DATA.filter(product => product.category === currentCategory);
+    const predicate = UI_CATEGORY_MAP[currentCategory];
+    if (!predicate) return PRODUCTS_DATA;
+    return PRODUCTS_DATA.filter(predicate);
 }
 
 // Loading Screen Management
@@ -1094,7 +1100,6 @@ function renderProductCards(page) {
             <div class="card-content-product">
                 <h2 class="card-title-product">${product.name}</h2>
                 <p class="card-subtitle-product">${product.subtitle}</p>
-                <p class="card-description-product">${product.description}</p>
                 <p class="card-price">${product.price}</p>
                 <div class="card-buttons-product">
                     <button class="btn btn-secondary">Detail</button>
@@ -1199,36 +1204,17 @@ function updatePaginationUI() {
 
 // Update navigation button states
 function updateNavigationButtons() {
-    const navPrev = document.getElementById('navPrev');
-    const navNext = document.getElementById('navNext');
     const paginationPrev = document.getElementById('paginationPrev');
     const paginationNext = document.getElementById('paginationNext');
 
     const canGoPrev = currentPage > 1;
     const canGoNext = currentPage < totalPages;
 
-    navPrev.disabled = !canGoPrev;
-    navNext.disabled = !canGoNext;
     paginationPrev.disabled = !canGoPrev;
     paginationNext.disabled = !canGoNext;
 }
 
-// Navigation handlers
-document.getElementById('navPrev').addEventListener('click', () => {
-    if (currentPage > 1) {
-        currentPage--;
-        renderProductCards(currentPage);
-        updatePaginationUI();
-    }
-});
-
-document.getElementById('navNext').addEventListener('click', () => {
-    if (currentPage < totalPages) {
-        currentPage++;
-        renderProductCards(currentPage);
-        updatePaginationUI();
-    }
-});
+// Navigation handlers (prev/next buttons removed; use pagination buttons instead)
 
 document.getElementById('paginationPrev').addEventListener('click', () => {
     if (currentPage > 1) {
@@ -1248,26 +1234,25 @@ document.getElementById('paginationNext').addEventListener('click', () => {
     }
 });
 
-// Category filter handlers
-document.querySelectorAll('.category-card').forEach(card => {
-    card.addEventListener('click', (e) => {
-        const category = card.dataset.category;
-        currentCategory = category;
-        
-        // Update active state
-        document.querySelectorAll('.category-card').forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        
-        // Reset to page 1 and filter products
-        currentPage = 1;
-        filteredProducts = getFilteredProducts();
-        
-        // Re-render products
-        renderProductCards(currentPage);
-        updatePaginationUI();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+// Category filter handlers for new chips
+(function initCategoryChips(){
+    const chips = document.querySelectorAll('.category-chip');
+    if (!chips.length) return;
+    chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            currentCategory = chip.dataset.category || 'all';
+            // Update active state
+            document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            // Apply filter
+            currentPage = 1;
+            filteredProducts = getFilteredProducts();
+            renderProductCards(currentPage);
+            updatePaginationUI();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
     });
-});
+})();
 
 // Initialize app
 renderProductCards(currentPage);
