@@ -8,9 +8,16 @@ const PRODUCTS = [
     category: 'Tas Selempang & Bahu Wanita',
     img: 'Product/img/IMG_4099.jpg',
     images: [
-      'Product/img/IMG_4099.jpg',
-      'Product/img/IMG_4098.jpg',
-      'Product/img/IMG_4103.jpg'
+      'Product/img/Slingbag-Purun-Lala/01.webp',
+      'Product/img/Slingbag-Purun-Lala/02.webp',
+      'Product/img/Slingbag-Purun-Lala/03.webp',
+      'Product/img/Slingbag-Purun-Lala/04.webp',
+      'Product/img/Slingbag-Purun-Lala/05.webp',
+      'Product/img/Slingbag-Purun-Lala/06.webp',
+      'Product/img/Slingbag-Purun-Lala/07.webp',
+      'Product/img/Slingbag-Purun-Lala/08.webp',
+      'Product/img/Slingbag-Purun-Lala/09.webp',
+      'Product/img/Slingbag-Purun-Lala/10.webp'
     ],
     description: 'Tote Bag klasik bergaya minimalis dengan bahan purun, cocok untuk kegiatan sehari-hari.',
     sold: 120,

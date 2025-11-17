@@ -1,60 +1,96 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Halaman Produk Detail</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="Produk_detail/Produk_detail.css?v=8">
-    <link rel="stylesheet" href="ui/toast.css?v=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Keranjang Belanja</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="cart.css?v=1" />
+  <link rel="stylesheet" href="../ui/toast.css?v=1" />
+  <link rel="stylesheet" href="../ui/modal.css?v=1" />
 
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../navbar/navbar.css">
+  <link rel="stylesheet" href="../footer/footer.css">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../purunikkk/navbar/navbar.css">
-    <link rel="stylesheet" href="../purunikkk/footer/footer.css">
+  <style>
+    /* Hero top waving element */
+    @property --tx { syntax: '<length>'; inherits: false; initial-value: 0px; }
+    @property --ty { syntax: '<length>'; inherits: false; initial-value: 0px; }
+    .hero-section { --wave-dy: 0px; overflow: visible; }
+    /* Align wave exactly inside the side stripes and never overflow */
+    .hero-wave { position:absolute; top:-5px; left:50%; transform:translateX(-50%); width:95vw; height:120px; overflow:hidden; z-index:0; pointer-events:none; }
+    .hero-wave__svg { width:100%; height:100%; display:block; }
 
-     <style>
-      /* Hero top waving element */
-      @property --tx { syntax: '<length>'; inherits: false; initial-value: 0px; }
-      @property --ty { syntax: '<length>'; inherits: false; initial-value: 0px; }
-      .hero-section { --wave-dy: 0px; overflow: visible; }
-      /* Align wave exactly inside the side stripes and never overflow */
-      .hero-wave { position:absolute; top:-5px; left:50%; transform:translateX(-50%); width:95vw; height:120px; overflow:hidden; z-index:0; pointer-events:none; }
-      .hero-wave__svg { width:100%; height:100%; display:block; }
-
-      /* Improved motion: decoupled horizontal drift (linear) + gentle vertical bob */
-      .hero-wave .wave { fill:#543310; opacity:.55; mix-blend-mode:plus-lighter; transform-origin:50% 0%; will-change:transform; animation: waveX var(--dur,16s) linear infinite, waveY calc(var(--dur,16s) * 1.5) ease-in-out infinite; transform: translate3d(var(--tx), calc(var(--y,0px) + var(--wave-dy) + var(--ty)), 0); }
-      .hero-wave .wave--1 { --dur:14s; --y:0px;  --amp:4px;  opacity:.5;  animation-delay:-1s; }
-      .hero-wave .wave--2 { --dur:16s; --y:8px;  --amp:6px;  opacity:.35; animation-delay:-2s; }
-      .hero-wave .wave--3 { --dur:20s; --y:14px; --amp:8px;  opacity:.25; animation-delay:-3s; }
-      @keyframes waveX {
-        from { --tx: 0px; }
-        to   { --tx: -64px; }
+    /* Improved motion: decoupled horizontal drift (linear) + gentle vertical bob */
+    .hero-wave .wave { fill:#543310; opacity:.55; mix-blend-mode:plus-lighter; transform-origin:50% 0%; will-change:transform; animation: waveX var(--dur,16s) linear infinite, waveY calc(var(--dur,16s) * 1.5) ease-in-out infinite; transform: translate3d(var(--tx), calc(var(--y,0px) + var(--wave-dy) + var(--ty)), 0); }
+    .hero-wave .wave--1 { --dur:14s; --y:0px;  --amp:4px;  opacity:.5;  animation-delay:-1s; }
+    .hero-wave .wave--2 { --dur:16s; --y:8px;  --amp:6px;  opacity:.35; animation-delay:-2s; }
+    .hero-wave .wave--3 { --dur:20s; --y:14px; --amp:8px;  opacity:.25; animation-delay:-3s; }
+    @keyframes waveX {
+      from { --tx: 0px; }
+      to   { --tx: -64px; }
+    }
+    @keyframes waveY {
+      0%   { --ty: 0px; }
+      50%  { --ty: var(--amp,6px); }
+      100% { --ty: 0px; }
+    }
+          body.light .hero-wave .wave { mix-blend-mode: normal; opacity:.45; }
+    body.dark .hero-wave .wave { fill:#F9F4E1; }
+    @media (max-width: 680px) {
+      .hero-wave {
+        height: 90px;
+        left: var(--stripe-total);
+        right: var(--stripe-total);
+        max-width: calc(100vw - (var(--stripe-total) * 2));
       }
-      @keyframes waveY {
-        0%   { --ty: 0px; }
-        50%  { --ty: var(--amp,6px); }
-        100% { --ty: 0px; }
-      }
-            body.light .hero-wave .wave { mix-blend-mode: normal; opacity:.45; }
-      body.dark .hero-wave .wave { fill:#F9F4E1; }
-      @media (max-width: 680px) {
-        .hero-wave {
-          height: 90px;
-          left: var(--stripe-total);
-          right: var(--stripe-total);
-          max-width: calc(100vw - (var(--stripe-total) * 2));
-        }
-      }
-    </style>
-    
+    }
+  
+  </style>
+  
 </head>
-
 <body>
+
+  <script>
+         function initScrollProgress() {
+    var bars = Array.prototype.slice.call(
+      document.querySelectorAll(
+        ".scroll-progress__bar, .scroll-progress-container .scroll-progress-bar, .scroll-progress-container-bottom .scroll-progress-bar"
+      )
+    );
+    if (!bars.length) return;
+
+    function update() {
+      var doc = document.documentElement;
+      var scrollTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+      var scrollHeight = doc.scrollHeight - doc.clientHeight;
+      var progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      bars.forEach(function(bar){
+        bar.style.width = progress + '%';
+      });
+    }
+
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+         }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initScrollProgress);
+    } else {
+      initScrollProgress();
+    }
+    </script>
+
+    <div class="scroll-progress scroll-progress--top">
+    <div class="scroll-progress__bar"></div>
+  </div>
+
       <section class="hero-section" id="home">
       <div class="hero-wave" aria-hidden="true">
         <svg class="hero-wave__svg" viewBox="0 0 1200 140" preserveAspectRatio="none">
@@ -64,117 +100,67 @@
         </svg>
       </div>
     </section>
-        <div class="page-wrapper-v2">
-            <!-- HERO -->
-            
-            <div class="Go_back">
-                <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="30px">
-                    <path d="m287-446.67 240 240L480-160 160-480l320-320 47 46.67-240 240h513v66.66H287Z"></path>
-                </svg>
-                <h4>Go back</h4>
-            </div>
 
-             <!-- Breadcrumb -->
-            <div class="breadcrumb">
-                <a href="index.html">Beranda</a> <span>›</span>
-                <a href="#">Produk</a> <span>›</span>
-                <p id="breadcrumb-product">Nama Produk</p>
-            </div>
+  <main class="cart-page">
+    <h1 class="cart-title">Keranjang Belanja</h1>
 
-            <section class="tabs-section">
-                <!-- Product Detail Section -->
-                <section class="product-section">
-                    <div class="product-images">
-                        <div class="thumbnail-list" id="thumbnail-list"></div>
-                        <div class="main-image-wrapper">
-                            <img id="main-img" src="" alt="Product" class="main">
-                        </div>
-                    </div>
+    <section class="cart-layout">
+      <div class="cart-list" id="cart-list">
+        <!-- Items rendered by cart.js -->
+      </div>
 
-
-
-                    <div class="product-info">
-                        <h2 id="product-name"></h2>
-
-                        <div class="rates">
-                            <h3 id="Terjual"><span id="Jumlah_terjual"></span> Terjual</h3>
-                            <div class="Bintang"></div>
-                        </div>
-
-                         <p id="product-price" class="price"></p>
-
-                        <div class="action-buttons">
-                            <h4> Pilih motif </h4>
-                            <div class="model_produk" style="display: flex;"></div>
-                        </div>
-                        <div class="model_produk_fun">
-                            <h4>Pilih Model</h4>
-                            <!-- Model cards akan dirender dari products.js -->
-                            <div class="Model_1"></div>
-                        </div>
-                        <div class="product-actions">
-                            <div class="Jumlah_produk" style="display: flex; align-items: center; gap: 10px;">
-                                <div class="quantity-container">
-                                <button class="pengurangan">
-                                    <i class="fa-solid fa-minus"></i>
-                                </button>
-                                <div class="Total" id="total_produk">0</div>
-                                <button class="penambahan">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
-                                </div>
-                                <button class="favorite" id="favorite">
-                                    <i class="fa-regular fa-heart"></i>
-                                </button>
-                            </div>
-
-                            <div class="action-buttons" style="display: flex; ">
-                                <button class="add-cart">
-                                    <i class="fa-solid fa-cart-shopping"></i> Tambah ke Keranjang
-                                </button>
-                                <button class="buy-now">
-                                    <i class="fa-solid fa-bolt"></i> Beli Sekarang
-                                </button>
-                            </div>
-                            <button class="chat-seller">
-                                <i class="fa-solid fa-comment-dots"></i>
-                                Tanya Penjual
-                            </button>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Specification & Description Tabs -->
-
-                <div class="tabs">
-                    <button class="tab active" id="tab-spec">Spesifikasi Produk</button>
-                    <button class="tab" id="tab-desc">Deskripsi Produk</button>
-                </div>
-
-                <div class="tab-content">
-                    <!-- Spesifikasi -->
-                    <div id="spec-content" class="specs active"></div>
-
-                    <!-- Deskripsi -->
-                    <div id="desc-content" class="description"></div>
-                </div>
-
-                <button class="info-btn">Tutup informasi produk</button>
-            </section>
-
-            <section class="rekomendasi-section">
-                <h3>Rekomendasi Produk</h3>
-                <div class="rekomendasi-track"></div>
-                <div class="rekomendasi-scroll">
-                    <span class="scroll-btn left">&lt;</span>
-                    <span class="scroll-btn right">&gt;</span>
-                </div>
-            </section>
+      <aside class="cart-summary" id="cart-summary">
+        <h3>Total Pesanan</h3>
+        <div class="summary-row">
+          <span>Total produk</span>
+          <span id="summary-count">0 Pesanan</span>
         </div>
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span id="summary-subtotal">Rp 0</span>
+        </div>
+        <p class="small-note">*Harga belum termasuk biaya pengiriman</p>
+        <button id="checkout-btn" class="btn-primary">Selesaikan Pembelian</button>
+      </aside>
     </section>
 
+    <div class="cart-actions">
+      <button id="clear-cart" class="btn-ghost">Kosongkan keranjang</button>
+    </div>
+  </main>
 
-<!-- FOOTER -->
+  <template id="cart-item-tpl">
+    <article class="cart-item">
+      <div class="item-left">
+        <img class="item-thumb" alt="thumb" />
+        <div class="item-info">
+          <h4 class="item-name"></h4>
+          <div class="item-variant"></div>
+          <div class="item-price"></div>
+        </div>
+      </div>
+      <div class="item-right">
+        <div class="qty-group">
+          <div class="qty-label">Kuantitas</div>
+          <div class="qty-bar">
+          <button class="btn-square btn-minus"><i class="fa-solid fa-minus"></i></button>
+          <div class="qty-value">1</div>
+          <button class="btn-square btn-plus"><i class="fa-solid fa-plus"></i></button>
+          </div>
+        </div>
+        <div class="item-total">
+          <span>Total harga</span>
+          <strong class="item-total-value">Rp 0</strong>
+        </div>
+        <div class="item-actions">
+          <button class="btn-chip move-to-wishlist">Ke wishlist</button>
+          <button class="btn-chip btn-danger remove-item">Hapus</button>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <!-- FOOTER -->
   <div class="footer-scope">
     <footer class="footer" data-section-id="footer">
       <div class="footer__wave" aria-hidden="true">
@@ -484,11 +470,11 @@
     </div>
   </div>
 
-  <script src="../purunikkk/navbar/navbar.js"></script>
-  <script src="ui/toast.js?v=1"></script>
-  <script src="../purunikkk/footer/footer.js"></script>
-  <script defer src="Product/products.js?v=2"></script>
-  <script defer src="Produk_detail/Produk_detail.js?v=7"></script>
+  <script src="../navbar/navbar.js"></script>
+  <script src="../footer/footer.js"></script>
 
+  <script src="../ui/toast.js?v=1"></script>
+  <script src="../ui/modal.js?v=1"></script>
+  <script src="cart.js?v=1"></script>
 </body>
 </html>

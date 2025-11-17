@@ -263,7 +263,11 @@ function renderProduct(){
       const priceNum = parsePriceToNumber(variant.price);
       if(existing) existing.qty += qty; else cart.push({ key, id: prod.id, name: prod.name, model: variant.model, motif: variant.motif, price: priceNum, qty });
       localStorage.setItem('cart', JSON.stringify(cart));
-      alert((prod.name || 'Produk') + ' ditambahkan ke keranjang.');
+      if (typeof showToast === 'function') {
+        showToast((prod.name || 'Produk') + ' ditambahkan ke keranjang.', 'success');
+      } else {
+        alert((prod.name || 'Produk') + ' ditambahkan ke keranjang.');
+      }
     });
   }
 
@@ -298,7 +302,11 @@ function renderProduct(){
         const existing = cart.find(x=>String(x.id)===String(p.id));
         if(existing) existing.qty += 1; else cart.push({ id: p.id, name: p.name, price: priceNum, qty: 1 });
         localStorage.setItem('cart', JSON.stringify(cart));
-        alert((p.name || 'Produk') + ' ditambahkan ke keranjang.');
+        if (typeof showToast === 'function') {
+          showToast((p.name || 'Produk') + ' ditambahkan ke keranjang.', 'success');
+        } else {
+          alert((p.name || 'Produk') + ' ditambahkan ke keranjang.');
+        }
       });
       card.querySelector('.btn-detail').addEventListener('click', ()=>{ window.location.href = resolveDetailUrl(p.id); });
       track.appendChild(card);
@@ -331,11 +339,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const descTab = document.getElementById("tab-desc");
   const specContent = document.getElementById("spec-content");
   const descContent = document.getElementById("desc-content");
+  const tabsContainer = document.querySelector(".tabs");
+  const tabContent = document.querySelector(".tab-content");
   const infoBtn = document.querySelector(".info-btn");
 
+  // Initial state: info section hidden, button prompts to open
+  if (tabsContainer) tabsContainer.style.display = "none";
+  if (tabContent) tabContent.style.display = "none";
   if (specContent) specContent.style.display = "block";
   if (descContent) descContent.style.display = "none";
-  if (infoBtn) infoBtn.textContent = "Tutup informasi produk";
+  if (infoBtn) infoBtn.textContent = "Lihat informasi produk";
 
   if (specTab && descTab && specContent && descContent) {
     specTab.addEventListener("click", () => {
@@ -355,15 +368,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (infoBtn) {
     infoBtn.addEventListener("click", () => {
-      const tabContent = document.querySelector(".tab-content");
-      if (!tabContent) return;
-      if (tabContent.style.display === "none") {
-        tabContent.style.display = "block";
-        infoBtn.textContent = "Tutup informasi produk";
-      } else {
-        tabContent.style.display = "none";
-        infoBtn.textContent = "Lihat informasi produk";
-      }
+      if (!tabsContainer || !tabContent) return;
+      const willOpen = tabsContainer.style.display === "none";
+      tabsContainer.style.display = willOpen ? "flex" : "none"; // tabs are flex row
+      tabContent.style.display = willOpen ? "block" : "none";
+      infoBtn.textContent = willOpen ? "Tutup informasi produk" : "Lihat informasi produk";
     });
   }
 });
