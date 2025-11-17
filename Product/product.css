@@ -1069,8 +1069,6 @@ body.dark .category-chip.active {
     flex-direction: column;
     height: 100%;
     transform-origin: center bottom;
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
 }
 
 .product-card::before {
@@ -1109,8 +1107,6 @@ body.dark .category-chip.active {
     background: radial-gradient(circle at top left, rgba(249, 244, 225, 0.85), rgba(215, 178, 144, 0.9));
     box-shadow: 0 8px 18px rgba(84, 51, 16, 0.35);
     border: 1px solid rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
 }
 
 .card-header-icon {

@@ -381,6 +381,127 @@
     }
   }
 
+  // -----------------------------
+  // 5. Products infinite carousel
+  // -----------------------------
+  function initProductCarousel() {
+    var track = document.querySelector('.products__grid');
+    if (!track) return;
+
+    var prefersReduced = false;
+    try {
+      prefersReduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    } catch (e) {}
+
+    var items = Array.prototype.slice.call(track.querySelectorAll('.product-card'));
+    if (!items.length) return;
+
+    // Duplicate cards to allow seamless looping
+    var cloneCount = items.length;
+    for (var i = 0; i < cloneCount; i++) {
+      var clone = items[i].cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      track.appendChild(clone);
+    }
+
+    var segmentWidth = 0;
+    function updateSegmentWidth() {
+      segmentWidth = track.scrollWidth / 2;
+    }
+    updateSegmentWidth();
+    window.addEventListener('resize', updateSegmentWidth);
+
+    // Auto-scroll logic
+    var speedPerMs = prefersReduced ? 0.02 : 0.08; // px per ms
+    var isPointerDown = false;
+    var startX = 0;
+    var startScrollLeft = 0;
+    var manualOverrideUntil = 0;
+    var lastTime = null;
+
+    function now() {
+      return window.performance && window.performance.now ? window.performance.now() : Date.now();
+    }
+
+    function getPageX(e) {
+      if (e.touches && e.touches.length) return e.touches[0].pageX;
+      if (e.changedTouches && e.changedTouches.length) return e.changedTouches[0].pageX;
+      return e.pageX || 0;
+    }
+
+    function pointerDown(e) {
+      isPointerDown = true;
+      track.classList.add('is-dragging');
+      startX = getPageX(e);
+      startScrollLeft = track.scrollLeft;
+      manualOverrideUntil = now() + 3500;
+    }
+
+    function pointerMove(e) {
+      if (!isPointerDown) return;
+      if (e.cancelable && typeof e.preventDefault === 'function') {
+        e.preventDefault();
+      }
+      var x = getPageX(e);
+      var walk = (startX - x);
+      track.scrollLeft = startScrollLeft + walk;
+    }
+
+    function pointerUp() {
+      isPointerDown = false;
+      track.classList.remove('is-dragging');
+    }
+
+    track.addEventListener('mousedown', pointerDown);
+    track.addEventListener('touchstart', pointerDown, { passive: true });
+    window.addEventListener('mousemove', pointerMove);
+    window.addEventListener('touchmove', pointerMove, { passive: false });
+    window.addEventListener('mouseup', pointerUp);
+    window.addEventListener('touchend', pointerUp);
+    track.addEventListener('mouseleave', pointerUp);
+    window.addEventListener('blur', pointerUp);
+
+    function loop(timestamp) {
+      if (!track) return;
+      if (lastTime == null) {
+        lastTime = timestamp;
+      }
+      var delta = timestamp - lastTime;
+      lastTime = timestamp;
+
+      if (!track) return;
+
+      var totalWidth = track.scrollWidth;
+      var visible = track.clientWidth;
+      var maxScroll = totalWidth - visible;
+      if (maxScroll <= 0) {
+        requestAnimationFrame(loop);
+        return;
+      }
+
+      var t = now();
+      var allowAuto = !isPointerDown && (!manualOverrideUntil || t > manualOverrideUntil);
+
+      if (allowAuto) {
+        track.scrollLeft += speedPerMs * delta;
+      }
+
+      if (segmentWidth > 0) {
+        if (track.scrollLeft >= segmentWidth) {
+          track.scrollLeft -= segmentWidth;
+        } else if (track.scrollLeft < 0) {
+          track.scrollLeft += segmentWidth;
+        }
+      } else if (track.scrollLeft >= maxScroll - 1) {
+        track.scrollLeft = 0;
+      }
+
+      requestAnimationFrame(loop);
+    }
+
+    requestAnimationFrame(loop);
+  }
+
   function initGrass() {
     var section = document.querySelector('.grass-section');
     var canvas = section && section.querySelector('.grass-canvas');
@@ -663,6 +784,7 @@
     initScrollProgress();
     initBottomNav();
     initBlob();
+    initProductCarousel();
     initCtaInteractive();
     initSmoothScrollers();
     initHeroRotatingSubtitle();
