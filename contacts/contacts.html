@@ -21,9 +21,11 @@
 
             <!-- ⭐ CONTACT MAIN -->
             <section class="contact-section">
-
-                <h1 class="contact-title">Hubungi Kami</h1>
-                <p class="contact-subtitle">Temukan kami di berbagai media sosial</p>
+               
+                                <div class="contact-header-card">
+                                    <h1 class="contact-title">Hubungi Kami</h1>
+                                    <p class="contact-subtitle">Temukan kami di berbagai media sosial</p>
+                                </div>
 
                 <div class="contact-icons">
 
@@ -382,8 +384,20 @@
         </div>
     </div>
 
-    <script src="../navbar/navbar.js"></script>
-    <script src="../footer/footer.js"></script>
+        <script src="../navbar/navbar.js"></script>
+        <script src="../footer/footer.js"></script>
+        <script>
+            // Enable theme toggle for contacts page
+            document.addEventListener('DOMContentLoaded', function() {
+                const themeBtns = document.querySelectorAll('#themeToggleMobile, #themeToggleTablet, #themeToggleDesktop');
+                themeBtns.forEach(btn => {
+                    if (!btn) return;
+                    btn.addEventListener('click', function() {
+                        document.body.classList.toggle('dark');
+                    });
+                });
+            });
+        </script>
 </body>
 
 </html>

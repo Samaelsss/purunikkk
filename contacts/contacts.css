@@ -1,3 +1,4 @@
+
 :root {
     --background: #F9F4E1;
     --foreground: #543310;
@@ -135,6 +136,22 @@ body::after {
 /* ——————————————————————————————————
    CONTACT SECTION
 —————————————————————————————————— */
+/* Contact header card styles for h1 & p */
+.contact-header-card {
+    width: 340px;
+    margin: 0 auto 40px auto;
+    background: #fff8f1;
+    border-radius: 18px;
+    border: 2px solid #d4b089;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 32px 18px 0px 18px;
+    transition: all 0.25s ease;
+} 
 .contact-section {
     text-align: center;
     padding: 60px 0 80px;
@@ -197,8 +214,15 @@ body::after {
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
+/* In dark mode, icon turns white on hover */
 .contact-card:hover i {
     color: #b68a60;
+}
+body.dark .contact-card:hover i {
+    color: #fff;
+}
+body.dark .contact-card:hover i {
+    color: #fff;
 }
 
 /* Optional platform highlight */
