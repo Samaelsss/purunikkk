@@ -1095,6 +1095,18 @@ body.light .section-connector::before {
     rgba(84, 51, 16, 0.65),
     rgba(84, 51, 16, 0));
 }
+body.light .products-carousel-shadow--left {
+  background: linear-gradient(to right,
+    #F9F4E1,
+    rgba(249, 244, 225, 0.7),
+    rgba(249, 244, 225, 0));
+}
+body.light .products-carousel-shadow--right {
+  background: linear-gradient(to left,
+    #F9F4E1,
+    rgba(249, 244, 225, 0.7),
+    rgba(249, 244, 225, 0));
+}
 /* Modern Product Card Design (copied from Product/product.css) */
 .product-card {
   position: relative;

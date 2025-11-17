@@ -51,6 +51,21 @@ body.light .footer-scope .footer {
   box-shadow: var(--ft-shadow);
   isolation: isolate;
 }
+.footer-scope .footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--ft-primary), var(--ft-secondary), var(--ft-primary));
+  box-shadow:
+    0 -1px 4px rgba(0,0,0,0.35),
+    0 4px 12px rgba(0,0,0,0.4);
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: 1;
+}
 
 /* Decorative wave */
 .footer-scope .footer__wave {

@@ -699,10 +699,10 @@
       var el = document.querySelector('.hero__rotating');
       if (!el) return;
       var phrases = [
-        'Handwoven Excellence',
-        'Crafted by Local Artisans',
-        'Sustainably Sourced Materials',
-        'Timeless Natural Aesthetics'
+        'Brand anyaman Purun dari Tabalong, Kalimantan Selatan',
+        'Didirikan tahun 2017 oleh Sri Munalisa & Mujilah Rahma',
+        'Kerajinan Purun, Rotan, dan Eceng Gondok berkualitas tinggi',
+        'Memberdayakan pengrajin lokal melalui pasar online & offline'
       ];
       var i = 0;
       var reduce = false;
