@@ -295,7 +295,7 @@ body::after {
    PRODUCT INFO CARD (smaller fit)
    =============================== */
 .product-info {
-  background: #fdf9f3;
+  background: var(--background);
   border-radius: 12px;
   padding: 12px 30px;
   width: 60vw;
@@ -376,8 +376,7 @@ body::after {
 }
 
 /* Item boxes */
-.model_produk > div,
-.model_produk_fun > div {
+.model_produk > div {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
@@ -392,7 +391,9 @@ body::after {
   transition: all 0.25s ease;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* soft depth */
 }
-
+.model_produk_fun > div{
+  display: inline-block;
+}
 /* Hover effect */
 .model_produk > div:hover,
 .model_produk_fun > div:hover {

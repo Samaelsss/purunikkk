@@ -23,6 +23,23 @@ const PRODUCTS = [
       { name: 'Polkadot', img: 'Produk_detail/Img/Logo_company.jpg' }
     ],
     models: ['Resleting', 'Pengait'],
+    // Variant pricing: model -> motif -> price
+    pricing: {
+      'Resleting': {
+        'Bunga': 259000,
+        'Anyaman': 255000,
+        'Monokrom': 249000,
+        'Garis': 245000,
+        'Polkadot': 250000
+      },
+      'Pengait': {
+        'Bunga': 239000,
+        'Anyaman': 235000,
+        'Monokrom': 229000,
+        'Garis': 225000,
+        'Polkadot': 230000
+      }
+    },
     specs: {
       'Kategori': 'Tas Selempang & Bahu Wanita',
       'Bahan': 'Purun',
@@ -53,6 +70,16 @@ const PRODUCTS = [
       { name: 'Emboss', img: 'Produk_detail/Img/Logo_company.jpg' }
     ],
     models: ['Snap', 'Resleting'],
+    pricing: {
+      'Snap': {
+        'Plain': 99000,
+        'Emboss': 109000
+      },
+      'Resleting': {
+        'Plain': 119000,
+        'Emboss': 129000
+      }
+    },
     specs: {
       'Kategori': 'Aksesori',
       'Bahan': 'Kanvas + PU Trim',
@@ -83,6 +110,12 @@ const PRODUCTS = [
       { name: 'Kasual', img: 'Produk_detail/Img/Logo_company.jpg' }
     ],
     models: ['Resleting'],
+    pricing: {
+      'Resleting': {
+        'Klasik': 185000,
+        'Kasual': 180000
+      }
+    },
     specs: {
       'Kategori': 'Tas',
       'Bahan': 'Nylon & PU',
