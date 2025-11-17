@@ -188,6 +188,42 @@ function renderProduct(){
       modelsWrap.appendChild(div);
     });
   }
+
+  // Helper: hitung harga berdasarkan pilihan motif + model
+  function getSelectedVariant() {
+    const motifActive = document.querySelector('.model_produk > div.active h4');
+    const modelActive = document.querySelector('.model_produk_fun > .Model_1.active h4');
+    const motif = motifActive ? motifActive.textContent.trim() : (prod.motifs?.[0]?.name || '');
+    const model = modelActive ? modelActive.textContent.trim() : (prod.models?.[0] || '');
+    let price = parsePriceToNumber(prod.price);
+    if (prod.pricing && prod.pricing[model] && prod.pricing[model][motif] != null) {
+      price = parsePriceToNumber(prod.pricing[model][motif]);
+    }
+    return { motif, model, price };
+  }
+
+  function updateDisplayedPrice() {
+    const { price } = getSelectedVariant();
+    if (priceEl) priceEl.textContent = formatRupiah(price);
+  }
+
+  // Set listener untuk update harga ketika motif / model diklik
+  document.querySelectorAll('.model_produk > div').forEach(div => {
+    div.addEventListener('click', () => {
+      div.parentElement.querySelectorAll('div').forEach(b=>b.classList.remove('active'));
+      div.classList.add('active');
+      updateDisplayedPrice();
+    });
+  });
+  document.querySelectorAll('.model_produk_fun > .Model_1').forEach(div => {
+    div.addEventListener('click', () => {
+      document.querySelectorAll('.model_produk_fun > .Model_1').forEach(b=>b.classList.remove('active'));
+      div.classList.add('active');
+      updateDisplayedPrice();
+    });
+  });
+  // Inisialisasi harga varian awal
+  updateDisplayedPrice();
   const wbtn = document.getElementById('add-wishlist-btn') || document.getElementById('favorite');
   if (wbtn) {
     const setWishText = (active) => {
@@ -221,9 +257,11 @@ function renderProduct(){
   const cartBtn = document.getElementById('add-cart-btn') || document.querySelector('.add-cart');
   if (cartBtn) {
     cartBtn.addEventListener('click', ()=>{
-      const existing = cart.find(x=>String(x.id)===String(prod.id));
-      const priceNum = parsePriceToNumber(prod.price);
-      if(existing) existing.qty += qty; else cart.push({ id: prod.id, name: prod.name, price: priceNum, qty });
+      const variant = getSelectedVariant();
+      const key = `${prod.id}|${variant.model}|${variant.motif}`;
+      const existing = cart.find(x=>String(x.key)===String(key));
+      const priceNum = parsePriceToNumber(variant.price);
+      if(existing) existing.qty += qty; else cart.push({ key, id: prod.id, name: prod.name, model: variant.model, motif: variant.motif, price: priceNum, qty });
       localStorage.setItem('cart', JSON.stringify(cart));
       alert((prod.name || 'Produk') + ' ditambahkan ke keranjang.');
     });
