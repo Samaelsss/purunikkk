@@ -146,6 +146,35 @@
         </div>
       </aside>
     </main>
+    
+    <div id="receipt-modal" class="receipt-modal" aria-hidden="true">
+      <div class="receipt-backdrop" id="receipt-close"></div>
+      <div class="receipt-card" role="dialog" aria-modal="true" aria-labelledby="receipt-title">
+        <div class="receipt-header">
+          <div class="receipt-brand">Purunik</div>
+          <h3 id="receipt-title">Struk Pesanan</h3>
+        </div>
+        <div class="receipt-body">
+          <div class="receipt-info">
+            <div>Nama: <strong id="r-name"></strong></div>
+            <div>Alamat: <strong id="r-address"></strong></div>
+            <div>Kontak: <strong id="r-phone"></strong></div>
+            <div>Tanggal: <strong id="r-date"></strong></div>
+          </div>
+          <hr class="receipt-sep" />
+          <div id="r-items" class="receipt-items"></div>
+          <div class="receipt-total">
+            <span>Total</span>
+            <strong id="r-total"></strong>
+          </div>
+          <div class="receipt-thanks">Terima kasih telah berbelanja di Purunik</div>
+        </div>
+        <div class="receipt-actions">
+          <button id="receipt-print" class="btn">Cetak / Simpan PDF</button>
+          <button id="receipt-wa" class="btn primary">Kirim via WhatsApp</button>
+        </div>
+      </div>
+    </div>
   </div>
   <!-- FOOTER -->
   <div class="footer-scope">

@@ -13,6 +13,44 @@ function parsePriceToNumber(price){
   return Number(digits || 0);
 }
 
+// --- Receipt helpers ---
+let lastReceiptText = '';
+function prepareReceipt(fullname, address, phone){
+  const messageLines = cart.map(c=>`• ${c.name} (${c.model} - ${c.motif}) x${c.qty} = ${formatRupiah(parsePriceToNumber(c.price)*c.qty)}`);
+  const total = cart.reduce((s,c)=> s + (parsePriceToNumber(c.price)*c.qty), 0);
+  const header = `Data Pembeli:%0ANama: ${encodeURIComponent(fullname)}%0AAlamat: ${encodeURIComponent(address)}%0ANo. HP: ${encodeURIComponent(phone)}`;
+  const items = `Pesanan:%0A${messageLines.map(encodeURIComponent).join('%0A')}`;
+  const totalLine = `Total: ${encodeURIComponent(formatRupiah(total))}`;
+  lastReceiptText = `${header}%0A%0A${items}%0A%0A${totalLine}`;
+
+  const modal = document.getElementById('receipt-modal');
+  const rName = document.getElementById('r-name');
+  const rAddress = document.getElementById('r-address');
+  const rPhone = document.getElementById('r-phone');
+  const rDate = document.getElementById('r-date');
+  const rItems = document.getElementById('r-items');
+  const rTotal = document.getElementById('r-total');
+  if (rName) rName.textContent = fullname;
+  if (rAddress) rAddress.textContent = address;
+  if (rPhone) rPhone.textContent = phone;
+  if (rDate) rDate.textContent = new Date().toLocaleString('id-ID');
+  if (rTotal) rTotal.textContent = formatRupiah(total);
+  if (rItems) {
+    rItems.innerHTML = '';
+    cart.forEach((c, i)=>{
+      const line = document.createElement('div');
+      line.className = 'receipt-item';
+      const qty = Number(c.qty||1);
+      const lineTotal = parsePriceToNumber(c.price) * qty;
+      line.innerHTML = `<span class="ri-name">${i+1}. ${c.name} x${qty}</span><span class="ri-price">${formatRupiah(lineTotal)}</span>`;
+      rItems.appendChild(line);
+    });
+  }
+  modal?.classList.add('show');
+  modal?.setAttribute('aria-hidden','false');
+  return { text: lastReceiptText };
+}
+
 // Prefer a temporary selection when coming from "Beli Sekarang" or Cart selection
 const selection = JSON.parse(localStorage.getItem('checkoutSelection')||'null');
 const cart = Array.isArray(selection) && selection.length
@@ -54,7 +92,7 @@ function renderSummary(){
 
 renderSummary();
 
-// Fake place order -> WhatsApp intent message (optional)
+// Fake place order -> generate receipt and actions
 const placeBtn = document.getElementById('place-order');
 placeBtn?.addEventListener('click', ()=>{
   const nameEl = document.getElementById('fullname');
@@ -80,12 +118,54 @@ placeBtn?.addEventListener('click', ()=>{
   if (!hasError && digits.length < 9) { if (errPhone) errPhone.textContent = 'No. HP tidak valid'; phoneEl?.focus(); hasError = true; }
   if (hasError) return;
 
-  const messageLines = cart.map(c=>`• ${c.name} (${c.model} - ${c.motif}) x${c.qty} = ${formatRupiah(parsePriceToNumber(c.price)*c.qty)}`);
-  const total = cart.reduce((s,c)=> s + (parsePriceToNumber(c.price)*c.qty), 0);
-  const header = `Data Pembeli:%0ANama: ${encodeURIComponent(fullname)}%0AAlamat: ${encodeURIComponent(address)}%0ANo. HP: ${encodeURIComponent(phone)}`;
-  const items = `Pesanan:%0A${messageLines.map(encodeURIComponent).join('%0A')}`;
-  const totalLine = `Total: ${encodeURIComponent(formatRupiah(total))}`;
-  const text = `${header}%0A%0A${items}%0A%0A${totalLine}`;
-  const wa = `https://wa.me/?text=${text}`;
-  window.open(wa, '_blank');
+  const { text } = prepareReceipt(fullname, address, phone);
+
+  const btnPrint = document.getElementById('receipt-print');
+  const btnWa = document.getElementById('receipt-wa');
+  const closeArea = document.getElementById('receipt-close');
+  btnPrint && (btnPrint.onclick = () => {
+    const modal = document.getElementById('receipt-modal');
+    // Pastikan modal terlihat sebelum print (menghindari PDF kosong)
+    modal?.classList.add('show');
+    modal?.setAttribute('aria-hidden','false');
+    // Beri waktu reflow singkat agar CSS print menangkap konten
+    setTimeout(()=>{ window.print(); }, 50);
+  });
+  btnWa && (btnWa.onclick = () => {
+    const wa = `https://wa.me/?text=${text}`;
+    window.open(wa, '_blank');
+  });
+  const modal = document.getElementById('receipt-modal');
+  closeArea && (closeArea.onclick = () => {
+    modal.classList.remove('show');
+    modal.setAttribute('aria-hidden','true');
+  });
+});
+
+// Ensure content exists if user opens browser print directly
+window.addEventListener('beforeprint', ()=>{
+  const modal = document.getElementById('receipt-modal');
+  const hasItems = Array.isArray(cart) && cart.length > 0;
+  const nameEl = document.getElementById('fullname');
+  const addrEl = document.getElementById('address');
+  const phoneEl = document.getElementById('phone');
+  const fullname = (nameEl?.value || '').trim();
+  const address = (addrEl?.value || '').trim();
+  const phone = (phoneEl?.value || '').trim();
+  if (hasItems && fullname && address && phone) {
+    prepareReceipt(fullname, address, phone);
+  } else {
+    // If not ready, at least reveal modal container to avoid blank
+    modal?.classList.add('show');
+    modal?.setAttribute('aria-hidden','false');
+  }
+});
+
+// Kembalikan state setelah print
+window.addEventListener('afterprint', ()=>{
+  const modal = document.getElementById('receipt-modal');
+  if (modal) {
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden','false');
+  }
 });
