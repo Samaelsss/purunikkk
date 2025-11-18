@@ -13,7 +13,14 @@
   const sumCountEl = document.getElementById('summary-count');
   const sumSubtotalEl = document.getElementById('summary-subtotal');
   const clearBtn = document.getElementById('clear-cart');
+  const checkoutBtn = document.getElementById('checkout-btn');
+  const toggleAllBtn = document.getElementById('toggle-select-all');
   const tpl = document.getElementById('cart-item-tpl');
+
+  // Selection helpers
+  const selectionKey = 'cartSelection';
+  const getSelection = () => JSON.parse(localStorage.getItem(selectionKey)||'[]').map(String);
+  const setSelection = (arr) => localStorage.setItem('cartSelection', JSON.stringify(arr.map(String)));
 
   function normalizeCartItem(it){
     return {
@@ -28,23 +35,70 @@
     };
   }
 
-  function computeSubtotal(cart){
-    return cart.reduce((acc, it)=> acc + Number(it.price||0)*Number(it.qty||0), 0);
+  // Toggle select all (single registration)
+  toggleAllBtn?.addEventListener('click', ()=>{
+    const c = getCart();
+    const allKeys = c.map(it=> String(it.key||it.id));
+    const sel = new Set(getSelection());
+    const allSelected = allKeys.length && allKeys.every(k=> sel.has(k));
+    if (allSelected) {
+      setSelection([]);
+    } else {
+      setSelection(allKeys);
+    }
+    render();
+  });
+
+  // Proceed to Checkout (only selected items) — outside render loop
+  checkoutBtn?.addEventListener('click', ()=>{
+    const c = getCart();
+    if (!c.length) {
+      if (typeof showToast === 'function') showToast('Keranjang masih kosong.', 'warning');
+      else alert('Keranjang masih kosong.');
+      return;
+    }
+    const selection = getSelection();
+    const items = selection.length ? c.filter(x=> selection.includes(String(x.key||x.id))) : c;
+    if (!items.length) {
+      if (typeof showToast === 'function') showToast('Pilih minimal satu barang untuk checkout.', 'warning');
+      else alert('Pilih minimal satu barang untuk checkout.');
+      return;
+    }
+    localStorage.setItem('checkoutSelection', JSON.stringify(items));
+    window.location.href = '../Checkout/checkout.html';
+  });
+
+  function computeSubtotal(arr){
+    return arr.reduce((acc, it)=> acc + Number(it.price||0)*Number(it.qty||0), 0);
   }
 
-  function updateSummary(cart){
-    const subtotal = computeSubtotal(cart);
-    sumCountEl.textContent = cart.length + ' Pesanan';
+  function getSelectedItems(all){
+    const selRaw = localStorage.getItem(selectionKey);
+    const hasSelKey = selRaw !== null;
+    const selSet = new Set((selRaw ? JSON.parse(selRaw) : []).map(String));
+    if (!hasSelKey) return all; // default: all selected
+    return all.filter(it => selSet.has(String(it.key||it.id)));
+  }
+
+  function updateSummaryForCurrent(){
+    const all = getCart().map(normalizeCartItem);
+    const selected = getSelectedItems(all);
+    const subtotal = computeSubtotal(selected);
+    sumCountEl.textContent = selected.length + ' Pesanan';
     sumSubtotalEl.textContent = rupiah(subtotal);
   }
 
   function render(){
     let cart = getCart().map(normalizeCartItem);
+    // IMPORTANT: detect if selection key exists to differentiate default-all vs empty selection
+    const selRaw = localStorage.getItem(selectionKey);
+    const hasSelKey = selRaw !== null;
+    let sel = new Set((selRaw ? JSON.parse(selRaw) : []).map(String));
     listEl.innerHTML = '';
 
     if (!cart.length){
       listEl.innerHTML = '<div class="empty-cart">Keranjangmu masih kosong.</div>';
-      updateSummary(cart);
+      updateSummaryForCurrent();
       return;
     }
 
@@ -63,12 +117,32 @@
       el.querySelector('.qty-value').textContent = String(it.qty);
       el.querySelector('.item-total-value').textContent = rupiah(it.price * it.qty);
 
+      // Selection checkbox
+      const selCb = el.querySelector('.select-item');
+      if (selCb) {
+        const keyStr = String(it.key);
+        selCb.checked = hasSelKey ? sel.has(keyStr) : true; // if no saved selection -> default all ON
+        selCb.addEventListener('change', ()=>{
+          const current = new Set(getSelection());
+          if (selCb.checked) current.add(keyStr); else current.delete(keyStr);
+          setSelection(Array.from(current));
+          // update select-all button label immediately
+          const c = getCart();
+          const allKeys = c.map(x=> String(x.key||x.id));
+          const allSelected = allKeys.length && allKeys.every(k=> current.has(k));
+          if (toggleAllBtn) toggleAllBtn.textContent = allSelected ? 'Batal pilih semua' : 'Pilih semua';
+          // update summary to reflect new selection
+          updateSummaryForCurrent();
+        });
+      }
+
       // Qty handlers
       el.querySelector('.btn-minus').addEventListener('click', ()=>{
         let c = getCart();
         const idx = c.findIndex(x=> (x.key||String(x.id)) === it.key);
         if (idx>-1){ c[idx].qty = Math.max(1, Number(c[idx].qty||1)-1); setCart(c); render(); }
       });
+      
       el.querySelector('.btn-plus').addEventListener('click', ()=>{
         let c = getCart();
         const idx = c.findIndex(x=> (x.key||String(x.id)) === it.key);
@@ -97,7 +171,15 @@
       listEl.appendChild(node);
     });
 
-    updateSummary(getCart());
+    // Update select-all button label based on current selection
+    const allKeys = cart.map(it=> String(it.key||it.id));
+    const currentSel = new Set(getSelection());
+    const allSelected = allKeys.length && allKeys.every(k=> currentSel.has(k));
+    if (toggleAllBtn) {
+      toggleAllBtn.textContent = allSelected ? 'Batal pilih semua' : 'Pilih semua';
+    }
+
+    updateSummaryForCurrent();
   }
 
   // Clear cart

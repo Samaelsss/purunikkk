@@ -3,13 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Keranjang Belanja</title>
+  <title>Checkout</title>
+  <link rel="stylesheet" href="checkout.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="cart.css?v=1" />
-  <link rel="stylesheet" href="../ui/toast.css?v=1" />
-  <link rel="stylesheet" href="../ui/modal.css?v=1" />
-
   <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,10 +48,8 @@
     }
   
   </style>
-  
 </head>
 <body>
-
   <script>
          function initScrollProgress() {
     var bars = Array.prototype.slice.call(
@@ -101,66 +95,58 @@
       </div>
     </section>
 
-  <main class="cart-page">
-    <h1 class="cart-title">Keranjang Belanja</h1>
-    <div class="cart-actions">
-      <button id="toggle-select-all" class="btn-ghost">Pilih semua</button>
-      <button id="clear-cart" class="btn-ghost">Kosongkan keranjang</button>
-    </div>
-    <section class="cart-layout">
-      
-      <div class="cart-list" id="cart-list">
-        <!-- Items rendered by cart.js -->
-      </div>
+  <div class="checkout-page">
+    <header class="checkout-header">
+      <h1>Checkout</h1>
+    </header>
 
-      <aside class="cart-summary" id="cart-summary">
-        <h3>Total Pesanan</h3>
-        <div class="summary-row">
-          <span>Total produk</span>
-          <span id="summary-count">0 Pesanan</span>
-        </div>
-        <div class="summary-row">
-          <span>Subtotal</span>
-          <span id="summary-subtotal">Rp 0</span>
-        </div>
-        <p class="small-note">*Harga belum termasuk biaya pengiriman</p>
-        <button id="checkout-btn" class="btn-primary">Selesaikan Pembelian</button>
-      </aside>
-    </section>
-  </main>
-
-  <template id="cart-item-tpl">
-    <article class="cart-item">
-      <div class="item-left">
-        <input type="checkbox" class="select-item" aria-label="Pilih item" checked>
-        <img class="item-thumb" alt="thumb" />
-        <div class="item-info">
-          <h4 class="item-name"></h4>
-          <div class="item-variant"></div>
-          <div class="item-price"></div>
-        </div>
-      </div>
-      <div class="item-right">
-        <div class="qty-group">
-          <div class="qty-label">Kuantitas</div>
-          <div class="qty-bar">
-          <button class="btn-square btn-minus"><i class="fa-solid fa-minus"></i></button>
-          <div class="qty-value">1</div>
-          <button class="btn-square btn-plus"><i class="fa-solid fa-plus"></i></button>
+    <main class="checkout-container">
+      <section class="form-card">
+        <h2>Isi Data</h2>
+        <div class="form-group">
+          <div class="label-row">
+            <label class="required" for="fullname">Nama</label>
+            <span class="field-error" id="err-fullname" aria-live="polite"></span>
           </div>
+          <input id="fullname" type="text" placeholder="Nama Lengkap" required autocomplete="name" />
         </div>
-        <div class="item-total">
-          <span>Total harga</span>
-          <strong class="item-total-value">Rp 0</strong>
+        <div class="form-group">
+          <div class="label-row">
+            <label class="required" for="address">Alamat</label>
+            <span class="field-error" id="err-address" aria-live="polite"></span>
+          </div>
+          <textarea id="address" rows="3" placeholder="Alamat Lengkap" required autocomplete="street-address"></textarea>
         </div>
-        <div class="item-actions">
-          <button class="btn-chip move-to-wishlist">Ke wishlist</button>
-          <button class="btn-chip btn-danger remove-item">Hapus</button>
+        <div class="form-group">
+          <div class="label-row">
+            <label class="required" for="phone">No. HP</label>
+            <span class="field-error" id="err-phone" aria-live="polite"></span>
+          </div>
+          <input id="phone" type="tel" placeholder="Contoh: 085161130209" required inputmode="tel" autocomplete="tel-national" />
         </div>
-      </div>
-    </article>
-  </template>
+      </section>
 
+      <aside class="summary-card">
+        <h2>Ringkasan Pesanan</h2>
+        <div id="summary-list" class="summary-list"></div>
+        <div class="summary-footer">
+          <div class="row">
+            <span>Total produk</span>
+            <strong id="total-items">0 Pesanan</strong>
+          </div>
+          <div class="row subtotal">
+            <span>Subtotal</span>
+            <strong id="subtotal">Rp 0</strong>
+          </div>
+          <div class="note">*Harga belum termasuk biaya pengiriman</div>
+          <button id="place-order" class="place-order">
+            <i class="fa-brands fa-whatsapp"></i>
+            Selesaikan Pembayaran
+          </button>
+        </div>
+      </aside>
+    </main>
+  </div>
   <!-- FOOTER -->
   <div class="footer-scope">
     <footer class="footer" data-section-id="footer">
@@ -474,8 +460,7 @@
   <script src="../navbar/navbar.js"></script>
   <script src="../footer/footer.js"></script>
 
-  <script src="../ui/toast.js?v=1"></script>
-  <script src="../ui/modal.js?v=1"></script>
-  <script src="cart.js?v=2"></script>
+  <script src="../Product/products.js"></script>
+  <script src="checkout.js"></script>
 </body>
 </html>

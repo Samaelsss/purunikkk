@@ -271,6 +271,24 @@ function renderProduct(){
     });
   }
 
+  // Buy Now -> push current selection and navigate to Checkout
+  const buyNowBtn = document.querySelector('.buy-now');
+  if (buyNowBtn) {
+    buyNowBtn.addEventListener('click', () => {
+      const variant = getSelectedVariant();
+      const key = `${prod.id}|${variant.model}|${variant.motif}`;
+      const priceNum = parsePriceToNumber(variant.price);
+      const existing = cart.find(x=>String(x.key)===String(key));
+      const itemObj = { key, id: prod.id, name: prod.name, model: variant.model, motif: variant.motif, price: priceNum, qty };
+      if(existing) existing.qty = (existing.qty||0) + qty; else cart.push(itemObj);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      // Only checkout this one item
+      localStorage.setItem('checkoutSelection', JSON.stringify([itemObj]));
+      // Go to checkout page
+      window.location.href = 'Checkout/checkout.html';
+    });
+  }
+
   const track = document.getElementById('recommendations-track') || document.querySelector('.rekomendasi-track');
   if (track) {
     track.innerHTML = '';
