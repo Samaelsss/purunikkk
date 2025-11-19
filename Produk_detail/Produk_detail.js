@@ -294,39 +294,37 @@ function renderProduct(){
     track.innerHTML = '';
     const others = dataset.filter(p=>String(p.id)!==String(prod.id));
     shuffleArray(others);
-    others.slice(0,6).forEach(p=>{
+    others.slice(0,8).forEach(p=>{
       const card = document.createElement('div');
-      card.className = 'produk-card';
+      card.className = 'rekom-card';
+      const imgSrc = p.thumb || p.img || p.image || '';
+      const priceText = formatRupiah(p.price);
+      const cat = p.category || 'Produk';
       card.innerHTML = `
-        <div class="produk-header">
-          <i>★</i>
-          <div>
-            <h4>${p.category || 'Produk'}</h4>
-            <p>${p.name}</p>
-          </div>
+        <div class="rc-media">
+          <span class="rc-badge">${(cat||'').split(' ')[0].toUpperCase()}<small>${cat}</small></span>
+          <img src="${imgSrc}" alt="${p.name || ''}">
         </div>
-        <div class="produk-body">
-          <img src="${p.thumb || p.img || p.image || ''}" alt="${p.name || ''}">
-          <h5>${p.name || ''}</h5>
-          <div class="subtitle">${formatRupiah(p.price)}</div>
-          <div class="buttons">
-            <button class="add-cart">Tambah</button>
-            <button class="btn-detail">Detail</button>
+        <div class="rc-body">
+          <div class="rc-sub">${(p.subtitle || cat || '').toUpperCase()}</div>
+          <div class="rc-title">${p.name || ''}</div>
+          <div class="rc-price">${priceText}</div>
+          <div class="rc-actions">
+            <button class="btn-pill btn-outline">Detail</button>
+            <button class="btn-pill btn-primary">Beli</button>
           </div>
-        </div>
-      `;
-      card.querySelector('.add-cart').addEventListener('click', ()=>{
+        </div>`;
+      const btnDetail = card.querySelector('.btn-outline');
+      const btnBuy = card.querySelector('.btn-primary');
+      btnDetail.addEventListener('click', ()=>{ window.location.href = resolveDetailUrl(p.id); });
+      btnBuy.addEventListener('click', ()=>{
         const priceNum = parsePriceToNumber(p.price);
         const existing = cart.find(x=>String(x.id)===String(p.id));
         if(existing) existing.qty += 1; else cart.push({ id: p.id, name: p.name, price: priceNum, qty: 1 });
         localStorage.setItem('cart', JSON.stringify(cart));
-        if (typeof showToast === 'function') {
-          showToast((p.name || 'Produk') + ' ditambahkan ke keranjang.', 'success');
-        } else {
-          alert((p.name || 'Produk') + ' ditambahkan ke keranjang.');
-        }
+        if (typeof showToast === 'function') showToast((p.name||'Produk')+' ditambahkan ke keranjang.','success');
+        else alert((p.name||'Produk')+' ditambahkan ke keranjang.');
       });
-      card.querySelector('.btn-detail').addEventListener('click', ()=>{ window.location.href = resolveDetailUrl(p.id); });
       track.appendChild(card);
     });
   }

@@ -1034,3 +1034,52 @@ button.secondary:hover {
   100% { transform: translateX(-50%); }
 }
 
+/* ===============================
+   Rekomendasi Produk (Overrides for provided markup)
+   =============================== */
+.rekomendasi-section h3{margin:0 0 14px 0;color:#4a2e17;font-size:22px;text-align:left}
+/* Use overflow scroll instead of infinite animation for this structure */
+.rekomendasi-section .rekomendasi-track{animation:none;display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 2px 10px}
+.rekomendasi-section .rekomendasi-track > *{flex:0 0 auto;scroll-snap-align:start}
+.rekomendasi-section .rekomendasi-track::-webkit-scrollbar{height:8px}
+.rekomendasi-section .rekomendasi-track::-webkit-scrollbar-thumb{background:#d3b890;border-radius:999px}
+.rekomendasi-section .rekomendasi-track::-webkit-scrollbar-track{background:transparent}
+
+/* Position buttons relative to the track area using the provided wrapper */
+.rekomendasi-section .rekomendasi-scroll{position:relative;height:0}
+.rekomendasi-section .rekomendasi-scroll .scroll-btn{position:absolute;top:-90px;transform:translateY(-50%);width:36px;height:36px;border-radius:999px;border:2px solid #2a1b0a;background:#fff;color:#7a5230;display:flex;align-items:center;justify-content:center;font-weight:900;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.12)}
+.rekomendasi-section .rekomendasi-scroll .scroll-btn.left{left:0}
+.rekomendasi-section .rekomendasi-scroll .scroll-btn.right{right:0}
+.rekomendasi-section .rekomendasi-scroll .scroll-btn:hover{background:#edd8b8}
+
+/* Card size presets if using .produk-card in track */
+.rekomendasi-section .produk-card{width:200px}
+.rekomendasi-section .produk-body img{width:80%}
+
+@media (max-width:680px){
+  .rekomendasi-section .rekomendasi-scroll .scroll-btn{display:none}
+  .rekomendasi-section .produk-card{width:170px}
+}
+
+/* ===============================
+   Rekomendasi Card (match Product page look)
+   =============================== */
+.rekom-card{background:#fff;border:2px solid #ead9c1;border-radius:18px;box-shadow:0 10px 24px rgba(84,51,16,.12), inset 0 0 0 6px rgba(255,255,255,.6);overflow:hidden;width:240px;flex:0 0 auto;scroll-snap-align:start;display:flex;flex-direction:column}
+.rekom-card .rc-media{position:relative;margin:12px 12px 0 12px;height:150px;border-radius:14px;background:linear-gradient(180deg,#e9d4ba,#d7b290);box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+.rekom-card .rc-media img{width:100%;height:100%;object-fit:cover;border-radius:14px;display:block}
+.rekom-card .rc-badge{position:absolute;top:8px;left:8px;background:#b68a60;color:#fff;padding:6px 10px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.15);font-size:11px;font-weight:800;letter-spacing:.2px}
+.rekom-card .rc-badge small{display:block;opacity:.9;font-weight:600}
+.rekom-card .rc-body{padding:12px 14px 14px 14px;display:flex;flex-direction:column;gap:4px}
+.rekom-card .rc-title{font-size:16px;color:#4a2e17;font-weight:800}
+.rekom-card .rc-sub{font-size:11px;color:#7a5230;text-transform:uppercase;letter-spacing:.3px}
+.rekom-card .rc-price{font-size:18px;color:#7a5230;font-weight:900;margin-top:6px}
+.rekom-card .rc-actions{display:flex;gap:10px;margin-top:10px}
+.rekom-card .btn-pill{flex:1;display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:10px 14px;font-weight:800;cursor:pointer;transition:.2s ease;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.rekom-card .btn-outline{background:#fff;border:2px solid #b68a60;color:#7a5230}
+.rekom-card .btn-outline:hover{background:#edd8b8}
+.rekom-card .btn-primary{background:linear-gradient(180deg,#a7794f,#7a5230);color:#fff;border:2px solid #7a5230}
+.rekom-card .btn-primary:hover{filter:brightness(1.05)}
+
+/* Compact size for horizontal list */
+.rekomendasi-section .rekom-card{width:220px}
+@media (max-width:680px){.rekomendasi-section .rekom-card{width:180px}.rekom-card .rc-media{height:120px}.rekom-card .rc-title{font-size:14px}.rekom-card .rc-price{font-size:16px}}
